@@ -1,14 +1,14 @@
 #include <wiringPi.h>
+#include <stdio.h>
 int main (void)
 {
   wiringPiSetup () ;
   pinMode (1, INPUT) ;
   for (;;)
-  {
-    if(digitalRead (1))
-    { 
-    	Console.WriteLine("output: " + digitalRead (1));
-    }
+  { 
+    	printf("output: ");
+	printf("%i", digitalRead (1));
+	printf("\n");
 	delay (500) ;
   }
   return 0 ;
