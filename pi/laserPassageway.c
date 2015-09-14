@@ -3,20 +3,25 @@
 #include <time.h>
 #include <unistd.h>
 
-//pin numbers
+//pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
 const int BEAM2 = 4;
 
-//logical state of beams
-//const int BROKEN = 0;
-//const int COMPLETE = 1;
+
+//time comparison variables
+struct tm beam1FallOld;
+struct tm beam1RiseOld;
+struct tm beam1RiseOld;
+struct tm beam1FallLatest;
+struct tm beam1RiseLatest;
+struct tm beam2FallOld;
+struct tm beam2RiseOld;
+struct tm beam2RiseOld;
+struct tm beam2FallLatest;
+struct tm * temp;
 
 int main (void)
 {
-  //previous values from the last run through
-  //int prevBeam1 = COMPLETE;
-  //int prevBeam2 = COMPLETE;
-
   //set up for wiringPi
   wiringPiSetup();
   pinMode(BEAM1,INPUT);
@@ -24,48 +29,65 @@ int main (void)
   pinMode(BEAM2,INPUT);
   pullUpDnControl(BEAM2, PUD_UP);
   
-  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinHandler1);
-  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinHandler2);
+  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinFall1);
+  wiringPiISR (BEAM1, INT_EDGE_RISING, pinRise1);
+  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinFall2);
+  wiringPiISR (BEAM2, INT_EDGE_RISING, pinRise2);
   
   while (1)
   {
 	wait();
   }
+}
 
-  //for (;;)
-  //{
-	//int currBeam1 = digitalRead(BEAM1);
-	//int currBeam2 = digitalRead(BEAM2);
-
-	//first beam
-	//if (prevBeam1 == COMPLETE && currBeam1 == BROKEN){
-		//hit on the first beam
-		//get system time and set a variable
-		//compare to last time of 2nd beam
-		//make an intelligent decision
-	//}
-
-	//second beam
-	//if (prevBeam2 == COMPLETE && currBeam2 == BROKEN){
-		//hit on second beam
-		//get system time and set a varibale
-		//compare to last time of 1st beam
-		//make an intelligent decision
-	//}
+void pinFall1 (void){
+	beam1FallOld = beam1FallLatest;
+	setTime(&beam1FallLatest);
 	
-	//prevBeam1 = currBeam1;
-	//prevBeam2 = currBeam2;
-	//delay(100);
-  //}
-  //return 0;
+	//output time to test
+	char buffer[26];
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest)
+	printf("Beam 1 fall at: ");
+	printf("%s\n ", buffer);
 }
 
-void pinHandler1 (void){
-	printf("%s : %i", "Hit on beam:" 1);
+void pinRise1 (void){
+	beam1RiseOld = beam1RiseLatest;
+	setTime(&beam1RiseLatest);
+	
+	//output time to test
+	char buffer[26];
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest)
+	printf("Beam 1 rise at: ");
+	printf("%s\n ", buffer);
 }
 
-void pinHandler2 (void){
-	printf("%s : %i", "Hit on beam:" 1);
+void pinFall2 (void){
+	beam2FallOld = beam2FallLatest;
+	setTime(&beam2FallLatest);
+	
+	//output time to test
+	char buffer[26];
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest)
+	printf("Beam 2 fall at: ");
+	printf("%s\n ", buffer);
+}
+
+void pinRise2 (void){
+	beam2RiseOld = beam2RiseLatest;
+	setTime(&beam2RiseLatest);
+	
+	//output time to test
+	char buffer[26];
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest)
+	printf("Beam 2 rise at: ");
+	printf("%s\n ", buffer);
+}
+
+setTime(struct * ptr){
+	time_t currentTime = timegm(&ptr);
+	temp = gmtime(currentTime);
+	ptr = *temp;
 }
 
 //new function
