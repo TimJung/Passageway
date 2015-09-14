@@ -2,11 +2,18 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/types.h>
+
+//declare your functions
+void pinFall1 (void);
+void pinRise1 (void);
+void pinFall1 (void);
+void pinFall2 (void);
+void setTime (struct*);
 
 //pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
 const int BEAM2 = 4;
-
 
 //time comparison variables
 struct tm beam1FallOld;
@@ -84,7 +91,7 @@ void pinRise2 (void){
 	printf("%s\n ", buffer);
 }
 
-setTime(struct * ptr){
+void setTime(struct * ptr){
 	time_t currentTime = timegm(&ptr);
 	temp = gmtime(currentTime);
 	ptr = *temp;
