@@ -8,14 +8,14 @@ const int BEAM1 = 1;
 const int BEAM2 = ?;
 
 //logical state of beams
-const int BROKEN = 0;
-const int COMPLETE = 1;
+//const int BROKEN = 0;
+//const int COMPLETE = 1;
 
 int main (void)
 {
   //previous values from the last run through
-  int prevBeam1 = COMPLETE;
-  int prevBeam2 = COMPLETE;
+  //int prevBeam1 = COMPLETE;
+  //int prevBeam2 = COMPLETE;
 
   //set up for wiringPi
   wiringPiSetup();
@@ -23,33 +23,41 @@ int main (void)
   pullUpDnControl(BEAM1,PUD_UP);
   pinMode(BEAM2,INPUT);
   pullUpDnControl(BEAM2, PUD_UP);
+  
+  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinHandler(BEAM1));
+  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinHandler(BEAM2));
+  
 
-  for (;;)
-  {
-	int currBeam1 = digitalRead(BEAM1);
-	int currBeam2 = digitalRead(BEAM2);
+  //for (;;)
+  //{
+	//int currBeam1 = digitalRead(BEAM1);
+	//int currBeam2 = digitalRead(BEAM2);
 
 	//first beam
-	if (prevBeam1 == COMPLETE && currBeam1 == BROKEN){
+	//if (prevBeam1 == COMPLETE && currBeam1 == BROKEN){
 		//hit on the first beam
 		//get system time and set a variable
 		//compare to last time of 2nd beam
 		//make an intelligent decision
-	}
+	//}
 
 	//second beam
-	if (prevBeam2 == COMPLETE && currBeam2 == BROKEN){
+	//if (prevBeam2 == COMPLETE && currBeam2 == BROKEN){
 		//hit on second beam
 		//get system time and set a varibale
 		//compare to last time of 1st beam
 		//make an intelligent decision
-	}
+	//}
 	
-	prevBeam1 = currBeam1;
-	prevBeam2 = currBeam2;
+	//prevBeam1 = currBeam1;
+	//prevBeam2 = currBeam2;
 	//delay(100);
-  }
-  return 0;
+  //}
+  //return 0;
+}
+
+void pinHandler (int pinNumber){
+	printf("%i", pinNumber);
 }
 
 //new function
@@ -60,18 +68,17 @@ int main (void)
 
 
   	//system time
-	time_t rawTime; 
+	//time_t rawTime; 
 
 	//initialize buffer for system time
-	char buffer[26];
-	struct tm* tm_info;
-	time(&rawTime);
-	tm_info = localtime(&rawTime);
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+	//char buffer[26];
+	//struct tm* tm_info;
+	//time(&rawTime);
+	//tm_info = localtime(&rawTime);
+	//strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
 
 	//print or sent to allJoyn router
-	printf("entry: ");
-	printf("%s\n ", buffer);
-
+	//printf("entry: ");
+	//printf("%s\n ", buffer);
 
 
