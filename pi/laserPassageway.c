@@ -5,7 +5,7 @@
 
 //pin numbers
 const int BEAM1 = 1;
-const int BEAM2 = ?;
+const int BEAM2 = 4;
 
 //logical state of beams
 //const int BROKEN = 0;
