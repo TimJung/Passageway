@@ -9,7 +9,7 @@ void pinFall1 (void);
 void pinRise1 (void);
 void pinFall1 (void);
 void pinFall2 (void);
-void setTime (struct*);
+void setTime (struct);
 
 //pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
