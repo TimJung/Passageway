@@ -46,7 +46,7 @@ void pinFall1 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest)
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest);
 	printf("Beam 1 fall at: ");
 	printf("%s\n ", buffer);
 }
@@ -57,7 +57,7 @@ void pinRise1 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest)
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest);
 	printf("Beam 1 rise at: ");
 	printf("%s\n ", buffer);
 }
@@ -68,7 +68,7 @@ void pinFall2 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest)
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest);
 	printf("Beam 2 fall at: ");
 	printf("%s\n ", buffer);
 }
@@ -79,7 +79,7 @@ void pinRise2 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest)
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest);
 	printf("Beam 2 rise at: ");
 	printf("%s\n ", buffer);
 }
