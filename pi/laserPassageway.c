@@ -24,9 +24,13 @@ int main (void)
   pinMode(BEAM2,INPUT);
   pullUpDnControl(BEAM2, PUD_UP);
   
-  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinHandler(BEAM1));
-  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinHandler(BEAM2));
+  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinHandler1);
+  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinHandler2);
   
+  while (1)
+  {
+	wait();
+  }
 
   //for (;;)
   //{
@@ -56,8 +60,12 @@ int main (void)
   //return 0;
 }
 
-void pinHandler (int pinNumber){
-	printf("%i", pinNumber);
+void pinHandler1 (void){
+	printf("%s : %i", "Hit on beam:" 1);
+}
+
+void pinHandler2 (void){
+	printf("%s : %i", "Hit on beam:" 1);
 }
 
 //new function
