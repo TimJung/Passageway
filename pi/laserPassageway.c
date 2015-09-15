@@ -3,13 +3,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 //declare your functions
 void pinFall1 (void);
 void pinRise1 (void);
-void pinFall1 (void);
 void pinFall2 (void);
-void setTime (struct * ptr);
+void pinRise2 (void);
+void setTime (struct tm *);
 
 //pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
@@ -18,12 +19,11 @@ const int BEAM2 = 4;
 //time comparison variables
 struct tm beam1FallOld;
 struct tm beam1RiseOld;
-struct tm beam1RiseOld;
 struct tm beam1FallLatest;
 struct tm beam1RiseLatest;
 struct tm beam2FallOld;
 struct tm beam2RiseOld;
-struct tm beam2RiseOld;
+struct tm beam2RiseLatest;
 struct tm beam2FallLatest;
 struct tm * temp;
 
@@ -43,7 +43,7 @@ int main (void)
   
   while (1)
   {
-	wait();
+	wait(NULL);
   }
 }
 
@@ -53,7 +53,7 @@ void pinFall1 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest);
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1FallLatest);
 	printf("Beam 1 fall at: ");
 	printf("%s\n ", buffer);
 }
@@ -64,7 +64,7 @@ void pinRise1 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest);
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1RiseLatest);
 	printf("Beam 1 rise at: ");
 	printf("%s\n ", buffer);
 }
@@ -75,7 +75,7 @@ void pinFall2 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest);
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam2FallLatest);
 	printf("Beam 2 fall at: ");
 	printf("%s\n ", buffer);
 }
@@ -86,15 +86,16 @@ void pinRise2 (void){
 	
 	//output time to test
 	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest);
+	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam2RiseLatest);
 	printf("Beam 2 rise at: ");
 	printf("%s\n ", buffer);
 }
 
-void setTime(struct * ptr){
-	time_t currentTime = timegm(&ptr);
-	temp = gmtime(currentTime);
-	ptr = *temp;
+void setTime(struct tm * ptr){
+	time_t currentTime;
+ 	currentTime = timegm(ptr);
+	temp = gmtime(&currentTime);
+	ptr = temp;
 }
 
 //new function
