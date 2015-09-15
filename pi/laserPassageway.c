@@ -36,10 +36,8 @@ int main (void)
   pinMode(BEAM2,INPUT);
   pullUpDnControl(BEAM2, PUD_UP);
   
-  wiringPiISR (BEAM1, INT_EDGE_FALLING, pinFall1);
-  wiringPiISR (BEAM1, INT_EDGE_RISING, pinRise1);
-  wiringPiISR (BEAM2, INT_EDGE_FALLING, pinFall2);
-  wiringPiISR (BEAM2, INT_EDGE_RISING, pinRise2);
+  wiringPiISR (BEAM1, INT_EDGE_BOTH, pinHandler1);
+  wiringPiISR (BEAM2, INT_EDGE_BOTH, pinHandler2);
   
   while (1)
   {
@@ -47,75 +45,77 @@ int main (void)
   }
 }
 
-void pinFall1 (void){
-	beam1FallOld = beam1FallLatest;
-	setTime(&beam1FallLatest);
+void pinHandler1 (void){
 	
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest);
-	printf("Beam 1 fall at: ");
-	printf("%s\n ", buffer);
+	
+	if (digitalRead(BEAM1)==1){
+		//if current read is a 1 then it was a fall
+		beam1FallOld = beam1FallLatest;
+		setTime(&beam1FallLatest);
+		
+		//output time to test
+		char buffer[26];
+		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1FallLatest);
+		printf("Beam 1 fall at: ");
+		printf("%s\n ", buffer);
+	} else {
+		//if current read is a 0 then it was a rise
+		beam1RiseOld = beam1RiseLatest;
+		setTime(&beam1RiseLatest);
+		
+		//output time to test
+		char buffer[26];
+		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest);
+		printf("Beam 1 rise at: ");
+		printf("%s\n ", buffer);
+	}
+}
+	
+
+void pinHandler2 (void){
+	
+	if (digitalRead(BEAM2)==1){
+		//if current read is a 1 then it was a fall
+		beam2FallOld = beam2FallLatest;
+		setTime(&beam2FallLatest);
+		
+		//output time to test
+		char buffer[26];
+		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest);
+		printf("Beam 1 fall at: ");
+		printf("%s\n ", buffer);
+	} else {
+		//if current read is a 0 then it was a rise
+		beam1RiseOld = beam1RiseLatest;
+		setTime(&beam1RiseLatest);
+		
+		//output time to test
+		char buffer[26];
+		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest);
+		printf("Beam 1 rise at: ");
+		printf("%s\n ", buffer);
+	}
 }
 
-void pinRise1 (void){
-	beam1RiseOld = beam1RiseLatest;
-	setTime(&beam1RiseLatest);
-	
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam1RiseLatest);
-	printf("Beam 1 rise at: ");
-	printf("%s\n ", buffer);
-}
-
-void pinFall2 (void){
-	beam2FallOld = beam2FallLatest;
-	setTime(&beam2FallLatest);
-	
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2FallLatest);
-	printf("Beam 2 fall at: ");
-	printf("%s\n ", buffer);
-}
-
-void pinRise2 (void){
-	beam2RiseOld = beam2RiseLatest;
-	setTime(&beam2RiseLatest);
-	
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", beam2RiseLatest);
-	printf("Beam 2 rise at: ");
-	printf("%s\n ", buffer);
-}
-
-void setTime(struct * ptr){
+void setTime(struct tm * ptr){
 	time_t currentTime = timegm(&ptr);
+	
 	temp = gmtime(currentTime);
 	ptr = *temp;
 }
 
-//new function
+//Pi Machine Name/ID
+// char hostName[100];
+//gethostname(&hostName, 100);
 
-  //Pi Machine Name/ID
-  // char hostName[100];
-  //gethostname(&hostName, 100);
+//System Time
+//time_t rawTime; 
 
-
-  	//system time
-	//time_t rawTime; 
-
-	//initialize buffer for system time
-	//char buffer[26];
-	//struct tm* tm_info;
-	//time(&rawTime);
-	//tm_info = localtime(&rawTime);
-	//strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
-
-	//print or sent to allJoyn router
-	//printf("entry: ");
-	//printf("%s\n ", buffer);
+//initialize buffer for system time
+//char buffer[26];
+//struct tm* tm_info;
+//time(&rawTime);
+//tm_info = localtime(&rawTime);
+//strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
 
 
