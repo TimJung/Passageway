@@ -6,7 +6,10 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 
-//function prototype
+int firstRise1 = 1;
+int firstRise2 = 1;
+
+//function prototypes
 void pinHandler1 (void);
 void pinHandler2 (void);
 void setTime (struct tm *);
@@ -50,8 +53,13 @@ struct timeval tv;
 struct timezone tz;
 
 void pinHandler1 (void){
-gettimeofday (&tv, &tz);
-printf ("%ld %ld\n", tv.tv_sec, tv.tv_usec);
+	gettimeofday (&tv, &tz);
+	printf ("%ld %ld\n", tv.tv_sec, tv.tv_usec);
+	
+	if (firstRise1){
+		firstRise1 = 0;
+		return;
+	}
 	if (digitalRead(BEAM1)==1){
 		//if current read is a 1 then it was a fall
 		beam1FallOld = beam1FallLatest;
@@ -64,18 +72,25 @@ printf ("%ld %ld\n", tv.tv_sec, tv.tv_usec);
 		printf("%s\n", buffer);
 	} else {
 		//if current read is a 0 then it was a rise
-		beam1RiseOld = beam1RiseLatest;
-		setTime(&beam1RiseLatest);
+			beam1RiseOld = beam1RiseLatest;
+			setTime(&beam1RiseLatest);
 
-		//output time to test
-		char buffer[26];
-		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1RiseLatest);
-		printf("Beam 1 rise at: ");
-		printf("%s\n", buffer);
+			//output time to test
+			char buffer[26];
+			strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1RiseLatest);
+			printf("Beam 1 rise at: ");
+			printf("%s\n", buffer);
+		
 	}
 }
 
 void pinHandler2 (void){
+	
+	if (firstRise2){
+		firstRise2 = 0;
+		return;
+	}
+	
 	if (digitalRead(BEAM2)==1){
 		//if current read is a 1 then it was a fall
 		beam2FallOld = beam2FallLatest;
