@@ -45,10 +45,7 @@ int main (void)
   }
 }
 
-void pinHandler1 (void){
-	
-<<<<<<< HEAD
-	
+void pinHandler1 (void){	
 	if (digitalRead(BEAM1)==1){
 		//if current read is a 1 then it was a fall
 		beam1FallOld = beam1FallLatest;
@@ -70,39 +67,9 @@ void pinHandler1 (void){
 		printf("Beam 1 rise at: ");
 		printf("%s\n ", buffer);
 	}
-=======
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1FallLatest);
-	printf("Beam 1 fall at: ");
-	printf("%s\n ", buffer);
 }
-
-void pinRise1 (void){
-	beam1RiseOld = beam1RiseLatest;
-	setTime(&beam1RiseLatest);
-	
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam1RiseLatest);
-	printf("Beam 1 rise at: ");
-	printf("%s\n ", buffer);
->>>>>>> origin/master
-}
-	
-<<<<<<< HEAD
-=======
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam2FallLatest);
-	printf("Beam 2 fall at: ");
-	printf("%s\n ", buffer);
-}
->>>>>>> origin/master
 
 void pinHandler2 (void){
-	
-<<<<<<< HEAD
 	if (digitalRead(BEAM2)==1){
 		//if current read is a 1 then it was a fall
 		beam2FallOld = beam2FallLatest;
@@ -115,8 +82,8 @@ void pinHandler2 (void){
 		printf("%s\n ", buffer);
 	} else {
 		//if current read is a 0 then it was a rise
-		beam1RiseOld = beam1RiseLatest;
-		setTime(&beam1RiseLatest);
+		beam2RiseOld = beam2RiseLatest;
+		setTime(&beam2RiseLatest);
 		
 		//output time to test
 		char buffer[26];
@@ -127,24 +94,10 @@ void pinHandler2 (void){
 }
 
 void setTime(struct tm * ptr){
-	time_t currentTime = timegm(&ptr);
-	
-	temp = gmtime(currentTime);
-	ptr = *temp;
-=======
-	//output time to test
-	char buffer[26];
-	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", &beam2RiseLatest);
-	printf("Beam 2 rise at: ");
-	printf("%s\n ", buffer);
-}
-
-void setTime(struct tm * ptr){
 	time_t currentTime;
  	currentTime = timegm(ptr);
 	temp = gmtime(&currentTime);
 	ptr = temp;
->>>>>>> origin/master
 }
 
 //Pi Machine Name/ID
