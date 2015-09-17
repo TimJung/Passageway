@@ -62,3 +62,10 @@ PEERROUTES=yes
 IPV6_PEERDNS=yes
 IPV6_PEERROUTES=yes
 ```
+
+## Login
+
+On peacanpi (running Pidora)
+userid: passage
+password: LetMeIntoP13
+
