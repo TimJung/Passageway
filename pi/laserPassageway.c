@@ -1,4 +1,5 @@
 #include <wiringPi.h>
+#include <string.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
@@ -14,6 +15,7 @@ void pinHandler1 (void);
 void pinHandler2 (void);
 struct time {struct timeval tv; struct timezone tz;};
 void setTime (struct time *);
+void eventAnalyzer(int risenBeam);
 
 //pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
@@ -72,15 +74,15 @@ void pinHandler1 (void){
 		setTime(&beam1FallLatest);
 
 		//output time to test
-		printf("Beam 1 fall at: ");
-		printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);		
+		//printf("Beam 1 fall at: ");
+		//printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);		
 	} else {
 		//if current read is a 0 then it was a rise
 			beam1RiseOld = beam1RiseLatest;
 			setTime(&beam1RiseLatest);
 
 			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
-			if(beam1RiseLatest > beam2RiseLatest && beam2RiseLatest > beam2FallLatest){
+			if(beam1RiseLatest.tv.tv_sec > beam2RiseLatest.tv.tv_sec && beam2RiseLatest.tv.tv_sec > beam2FallLatest.tv.tv_sec){
 				eventAnalyzer(BEAM1);
 				printf("Current number of entries: %d\n", entryCount);
 				printf("Current number of exits: %d\n\n", exitCount);
@@ -105,15 +107,17 @@ void pinHandler2 (void){
 		setTime(&beam2FallLatest);
 
 		//output time to test
-		printf("Beam 2 fall at: ");
-		printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);		
+		//printf("Beam 2 fall at: ");
+		//printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);		
 	} else {
 		//if current read is a 0 then it was a rise
 		beam2RiseOld = beam2RiseLatest;
 		setTime(&beam2RiseLatest);
 		
+		printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
+		printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
-		if(beam2RiseLatest > beam1RiseLatest && beam1RiseLatest > beam1FallLatest){
+		if(beam2RiseLatest.tv.tv_usec > beam1RiseLatest.tv.tv_usec && beam1RiseLatest.tv.tv_usec > beam1FallLatest.tv.tv_usec){
 			eventAnalyzer(BEAM2);
 			printf("Current number of entries: %d\n", entryCount);
 			printf("Current number of exits: %d\n\n", exitCount);
@@ -138,32 +142,43 @@ void setTime(struct time * ptr){
 	*ptr = t1;
 }
 
-void eventAnalyzer (int risenBeam)
+void eventAnalyzer (int risenBeam){
+  
+  long ALatestFall;
+  long ALatestRise;
+  long AOldFall;
+  long AOldRise;
+  long BLatestFall;
+  long BLatestRise;
+  long BOldFall;
+  long BOldRise;
+  char * type;
+  
 	if (risenBeam == BEAM1){
-		ALatestFall = beam1FallLatest.tv;
-		ALatestRise	= beam1RiseLatest.tv;
-		AOldFall = beam1FallOld.tv;
-		AOldRise = beam1RiseOld.tv;
+		ALatestFall = beam1FallLatest.tv.tv_sec;
+		ALatestRise	= beam1RiseLatest.tv.tv_sec;
+		AOldFall = beam1FallOld.tv.tv_sec;
+		AOldRise = beam1RiseOld.tv.tv_sec;
 		
-		BLatestFall = beam2FallLatest.tv;
-		BLatestRise = beam2RiseLatest.tv;
-		BOldFall = beam2FallOld.tv;
-		BOldRise = beam2RiseOld.tv;
+		BLatestFall = beam2FallLatest.tv.tv_sec;
+		BLatestRise = beam2RiseLatest.tv.tv_sec;
+		BOldFall = beam2FallOld.tv.tv_sec;
+		BOldRise = beam2RiseOld.tv.tv_sec;
 		
-		char[0] type = "ENTRY"
+		type = "ENTRY";
 	} else {
 		//set the variables oppositely
-		ALatestFall = beam2FallLatest.tv;
-		ALatestRise	= beam2RiseLatest.tv;
-		AOldFall = beam2FallOld.tv;
-		AOldRise = beam2RiseOld.tv;
+		ALatestFall = beam2FallLatest.tv.tv_sec;
+		ALatestRise	= beam2RiseLatest.tv.tv_sec;
+		AOldFall = beam2FallOld.tv.tv_sec;
+		AOldRise = beam2RiseOld.tv.tv_sec;
 		
-		BLatestFall = beam1FallLatest.tv;
-		BLatestRise = beam1RiseLatest.tv;
-		BOldFall = beam1FallOld.tv;
-		BOldRise = beam1RiseOld.tv;
+		BLatestFall = beam1FallLatest.tv.tv_sec;
+		BLatestRise = beam1RiseLatest.tv.tv_sec;
+		BOldFall = beam1FallOld.tv.tv_sec;
+		BOldRise = beam1RiseOld.tv.tv_sec;
 
-		char[0] type = "EXIT"
+		type = "EXIT";
 	}
 	
 	
@@ -188,15 +203,15 @@ void eventAnalyzer (int risenBeam)
 			if((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) < DELTA_TIME_OUT &&
 			 ((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) > DELTA_TIME_OUT*-1)){
 				//ENTRY and EXIT
-				entryNumber +=1;
-				exitNumber +=1;
+				entryCount +=1;
+				exitCount +=1;
 				return;
 			}			
 		}
 	//case 3
 		if(ALatestFall < BLatestFall){
 			//increment Entry/Exit # based on type
-			if type == "ENTRY"{
+			if (strcmp(type, "ENTRY")){
 				entryCount +=1;
 			} else {
 				exitCount +=1;
