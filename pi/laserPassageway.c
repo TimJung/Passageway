@@ -30,6 +30,14 @@ struct time beam2RiseLatest;
 struct time beam2FallLatest;
 struct time * temp;
 
+//What is the ideal threshold?
+const int TIME_OUT = 1000;
+const int DELTA_TIME_OUT = 1000;
+
+//Tracks the number of events so they can be sent when alarm is called.
+int entryCount;
+int exitCount;
+
 int main (void)
 {
   //set up for wiringPi
@@ -71,9 +79,16 @@ void pinHandler1 (void){
 			beam1RiseOld = beam1RiseLatest;
 			setTime(&beam1RiseLatest);
 
+			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
+			if(beam1RiseLatest > beam2RiseLatest && beam2RiseLatest > beam2FallLatest){
+				eventAnalyzer(BEAM1);
+				printf("Current number of entries: %d\n", entryCount);
+				printf("Current number of exits: %d\n\n", exitCount);
+			}
+
 			//output time to test
-			printf("Beam 1 rise at: ");
-			printf ("%ld %ld\n", beam1RiseLatest.tv.tv_sec, beam1RiseLatest.tv.tv_usec);		
+			// printf("Beam 1 rise at: ");
+			// printf ("%ld %ld\n", beam1RiseLatest.tv.tv_sec, beam1RiseLatest.tv.tv_usec);		
 	}
 }
 
@@ -97,9 +112,16 @@ void pinHandler2 (void){
 		beam2RiseOld = beam2RiseLatest;
 		setTime(&beam2RiseLatest);
 		
+		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
+		if(beam2RiseLatest > beam1RiseLatest && beam1RiseLatest > beam1FallLatest){
+			eventAnalyzer(BEAM2);
+			printf("Current number of entries: %d\n", entryCount);
+			printf("Current number of exits: %d\n\n", exitCount);
+		}
+
 		//output time to test
-		printf("Beam 2 rise at: ");
-		printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);		
+		// printf("Beam 2 rise at: ");
+		// printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);		
 	}
 }
 
@@ -114,6 +136,74 @@ void setTime(struct time * ptr){
 	t1.tv = tv1;
 	t1.tz = tz1;
 	*ptr = t1;
+}
+
+void eventAnalyzer (int risenBeam)
+	if (risenBeam == BEAM1){
+		ALatestFall = beam1FallLatest.tv;
+		ALatestRise	= beam1RiseLatest.tv;
+		AOldFall = beam1FallOld.tv;
+		AOldRise = beam1RiseOld.tv;
+		
+		BLatestFall = beam2FallLatest.tv;
+		BLatestRise = beam2RiseLatest.tv;
+		BOldFall = beam2FallOld.tv;
+		BOldRise = beam2RiseOld.tv;
+		
+		char[0] type = "ENTRY"
+	} else {
+		//set the variables oppositely
+		ALatestFall = beam2FallLatest.tv;
+		ALatestRise	= beam2RiseLatest.tv;
+		AOldFall = beam2FallOld.tv;
+		AOldRise = beam2RiseOld.tv;
+		
+		BLatestFall = beam1FallLatest.tv;
+		BLatestRise = beam1RiseLatest.tv;
+		BOldFall = beam1FallOld.tv;
+		BOldRise = beam1RiseOld.tv;
+
+		char[0] type = "EXIT"
+	}
+	
+	
+	//A is the current beam being considered. B is the other beam.
+	//case 0
+		//only continue if time elapsed between 2 beams is less than threshold.
+		if((ALatestFall - BLatestFall >= TIME_OUT) && (ALatestFall - BLatestFall <= TIME_OUT*-1)){
+			return;
+		}
+	//case 1
+		// if (BOldRise > ALatestFall){
+		// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) && 
+		// 		((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) > DELTA_TIME_OUT*-1)){
+		// 		//ENTRY and EXIT
+		// 		entryNumber +=1;
+		// 		exitNumber +=1;
+		// 		return;
+		// 	}			
+		// }
+	//case 2
+		if (AOldRise > BLatestFall){
+			if((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) < DELTA_TIME_OUT &&
+			 ((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) > DELTA_TIME_OUT*-1)){
+				//ENTRY and EXIT
+				entryNumber +=1;
+				exitNumber +=1;
+				return;
+			}			
+		}
+	//case 3
+		if(ALatestFall < BLatestFall){
+			//increment Entry/Exit # based on type
+			if type == "ENTRY"{
+				entryCount +=1;
+			} else {
+				exitCount +=1;
+			}
+			return;
+		}
+		printf("No event occurred. Why are we here???");
 }
 
 //Pi Machine Name/ID
