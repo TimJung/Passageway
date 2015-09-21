@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <wiringPi.h>
 #include <string.h>
 #include <stdio.h>
@@ -16,10 +17,17 @@ void pinHandler2 (void);
 struct time {struct timeval tv; struct timezone tz;};
 void setTime (struct time *);
 void eventAnalyzer(int risenBeam);
+int isTimeGreater(struct time time1, struct time time2);
+long diffTimeMicro (struct time time1, struct time time2);
+
 
 //pin numbers. 1 is entry. 2 is exit.
 const int BEAM1 = 1;
 const int BEAM2 = 4;
+
+//time structs to be stored in the time
+struct timeval tv;
+struct timezone tz;
 
 //time comparison variables
 struct time beam1FallOld;
@@ -33,8 +41,8 @@ struct time beam2FallLatest;
 struct time * temp;
 
 //What is the ideal threshold?
-const int TIME_OUT = 1000;
-const int DELTA_TIME_OUT = 1000;
+const int TIME_OUT = 3;
+const int DELTA_TIME_OUT = 10000;
 
 //Tracks the number of events so they can be sent when alarm is called.
 int entryCount;
@@ -54,14 +62,27 @@ int main (void)
   wiringPiISR (BEAM1, INT_EDGE_BOTH, pinHandler1);
   wiringPiISR (BEAM2, INT_EDGE_BOTH, pinHandler2);
 
+  
+  //testing methods
+  struct time time1;
+  struct time time2;
+ 
+  gettimeofday(&time1.tv, &time1.tz);
+  gettimeofday(&time2.tv, &time2.tz);
+  
+  time1.tv.tv_usec += 10000;
+  
+  int test = isTimeGreater(time1, time2);
+  
+  printf("%d\n", test);
+  //end testing time
+  
+  
   while (1)
   {
 	wait(NULL);
   }
 }
-
-struct timeval tv;
-struct timezone tz;
 
 void pinHandler1 (void){
 	if (firstRise1){
@@ -117,7 +138,7 @@ void pinHandler2 (void){
 		printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
 		printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
-		if(beam2RiseLatest.tv.tv_usec > beam1RiseLatest.tv.tv_usec && beam1RiseLatest.tv.tv_usec > beam1FallLatest.tv.tv_usec){
+		if((beam2RiseLatest.tv.tv_usec > beam1RiseLatest.tv.tv_usec) && (beam1RiseLatest.tv.tv_usec > beam1FallLatest.tv.tv_usec)){
 			eventAnalyzer(BEAM2);
 			printf("Current number of entries: %d\n", entryCount);
 			printf("Current number of exits: %d\n\n", exitCount);
@@ -144,39 +165,39 @@ void setTime(struct time * ptr){
 
 void eventAnalyzer (int risenBeam){
   
-  long ALatestFall;
-  long ALatestRise;
-  long AOldFall;
-  long AOldRise;
-  long BLatestFall;
-  long BLatestRise;
-  long BOldFall;
-  long BOldRise;
+  struct time ALatestFall;
+  struct time ALatestRise;
+  struct time AOldFall;
+  struct time AOldRise;
+  struct time BLatestFall;
+  struct time BLatestRise;
+  struct time BOldFall;
+  struct time BOldRise;
   char * type;
   
 	if (risenBeam == BEAM1){
-		ALatestFall = beam1FallLatest.tv.tv_sec;
-		ALatestRise	= beam1RiseLatest.tv.tv_sec;
-		AOldFall = beam1FallOld.tv.tv_sec;
-		AOldRise = beam1RiseOld.tv.tv_sec;
+		ALatestFall = beam1FallLatest;
+		ALatestRise = beam1RiseLatest;
+		AOldFall = beam1FallOld;
+		AOldRise = beam1RiseOld;
 		
-		BLatestFall = beam2FallLatest.tv.tv_sec;
-		BLatestRise = beam2RiseLatest.tv.tv_sec;
-		BOldFall = beam2FallOld.tv.tv_sec;
-		BOldRise = beam2RiseOld.tv.tv_sec;
+		BLatestFall = beam2FallLatest;
+		BLatestRise = beam2RiseLatest;
+		BOldFall = beam2FallOld;
+		BOldRise = beam2RiseOld;
 		
 		type = "ENTRY";
 	} else {
 		//set the variables oppositely
-		ALatestFall = beam2FallLatest.tv.tv_sec;
-		ALatestRise	= beam2RiseLatest.tv.tv_sec;
-		AOldFall = beam2FallOld.tv.tv_sec;
-		AOldRise = beam2RiseOld.tv.tv_sec;
+		ALatestFall = beam2FallLatest;
+		ALatestRise	= beam2RiseLatest;
+		AOldFall = beam2FallOld;
+		AOldRise = beam2RiseOld;
 		
-		BLatestFall = beam1FallLatest.tv.tv_sec;
-		BLatestRise = beam1RiseLatest.tv.tv_sec;
-		BOldFall = beam1FallOld.tv.tv_sec;
-		BOldRise = beam1RiseOld.tv.tv_sec;
+		BLatestFall = beam1FallLatest;
+		BLatestRise = beam1RiseLatest;
+		BOldFall = beam1FallOld;
+		BOldRise = beam1RiseOld;
 
 		type = "EXIT";
 	}
@@ -185,7 +206,8 @@ void eventAnalyzer (int risenBeam){
 	//A is the current beam being considered. B is the other beam.
 	//case 0
 		//only continue if time elapsed between 2 beams is less than threshold.
-		if((ALatestFall - BLatestFall >= TIME_OUT) && (ALatestFall - BLatestFall <= TIME_OUT*-1)){
+		if((ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec >= TIME_OUT) && 
+		    (ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec <= TIME_OUT*-1)){
 			return;
 		}
 	//case 1
@@ -199,9 +221,11 @@ void eventAnalyzer (int risenBeam){
 		// 	}			
 		// }
 	//case 2
-		if (AOldRise > BLatestFall){
-			if((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) < DELTA_TIME_OUT &&
-			 ((AOldFall - BLatestFall) - (ALatestRise - BLatestRise) > DELTA_TIME_OUT*-1)){
+		if (isTimeGreater(AOldRise, BLatestFall)){
+			if((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
+			   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) < DELTA_TIME_OUT &&
+			   ((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
+			   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) > DELTA_TIME_OUT*-1)){
 				//ENTRY and EXIT
 				entryCount +=1;
 				exitCount +=1;
@@ -209,7 +233,7 @@ void eventAnalyzer (int risenBeam){
 			}			
 		}
 	//case 3
-		if(ALatestFall < BLatestFall){
+		if(isTimeGreater(ALatestFall, BLatestFall)){
 			//increment Entry/Exit # based on type
 			if (strcmp(type, "ENTRY")){
 				entryCount +=1;
@@ -219,6 +243,37 @@ void eventAnalyzer (int risenBeam){
 			return;
 		}
 		printf("No event occurred. Why are we here???");
+}
+
+//returns a 1 if time1 is greater, or a 0 if time2 is greater
+int isTimeGreater (struct time time1, struct time time2){
+  if (time1.tv.tv_sec == time2.tv.tv_sec){
+    if(time1.tv.tv_usec > time2.tv.tv_sec){
+      return 1;
+    }
+  //if the seconds are equal then compare microseconds.
+  } else if (time1.tv.tv_sec > time2.tv.tv_sec){
+    return 1;   
+  } else
+    return 0;
+}
+
+//return the difference in microseconds between the two times given.
+long diffTimeMicro (struct time time1, struct time time2){
+  //if seconds are equal just compare microseconds
+  if (time1.tv.tv_sec == time2.tv.tv_sec){
+      return abs(time1.tv.tv_usec - time2.tv.tv_usec);
+      
+  //if time1 has greater # of seconds then add the multiple to time2 and subtract from time1
+  } else if (time1.tv.tv_sec < time2.tv.tv_sec) {
+      int count = time2.tv.tv_sec - time1.tv.tv_sec;
+      return (count*1000000 + time2.tv.tv_usec) - time1.tv.tv_usec;
+      
+  //if time2 has greater # of seconds then add the multiple to time1 and subtract from time2
+  } else if (time1.tv.tv_sec > time2.tv.tv_sec){
+      int count = time1.tv.tv_sec - time2.tv.tv_sec;
+      return (count*1000000 + time1.tv.tv_usec) - time2.tv.tv_sec;
+  }
 }
 
 //Pi Machine Name/ID
