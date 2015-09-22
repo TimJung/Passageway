@@ -21,7 +21,7 @@ int isTimeGreater(struct time time1, struct time time2);
 long diffTimeMicro (struct time time1, struct time time2);
 
 
-//pin numbers. 1 is entry. 2 is exit.
+//pin numbers. B1 is entry. B2 is exit.
 const int BEAM1 = 1;
 const int BEAM2 = 4;
 
@@ -48,6 +48,10 @@ const int DELTA_TIME_OUT = 10000;
 int entryCount;
 int exitCount;
 
+
+/*
+ * Main method
+ */
 int main (void)
 {
   //set up for wiringPi
@@ -84,6 +88,12 @@ int main (void)
   }
 }
 
+
+/*
+ * Function: pinHandler1
+ * ----------------------
+ * Handles the interupt when beam 1's state changes
+ */
 void pinHandler1 (void){
 	if (firstRise1){
 		firstRise1 = 0;
@@ -115,6 +125,12 @@ void pinHandler1 (void){
 	}
 }
 
+
+/*
+ * Function: pinHandler2
+ * ----------------------
+ * Handles the interupt when beam 1's state changes
+ */
 void pinHandler2 (void){
 	
 	if (firstRise2){
@@ -150,6 +166,14 @@ void pinHandler2 (void){
 	}
 }
 
+
+/*
+ * Function: setTime
+ * ----------------------
+ * Sets the global variables to the current time
+ * 
+ * ptr: the time struct that is set to the current time
+ */
 void setTime(struct time * ptr){
 	struct time t1 = *ptr;
 	struct timeval tv1 = t1.tv;
@@ -163,18 +187,26 @@ void setTime(struct time * ptr){
 	*ptr = t1;
 }
 
+
+/*
+ * Function: eventAnalyzer
+ * ----------------------
+ * Logic that makes the decision on what to do based on rise and fall of each beam.
+ * 
+ * risenBeam: The beam that has been detected as risen
+ */
 void eventAnalyzer (int risenBeam){
   
-  struct time ALatestFall;
-  struct time ALatestRise;
-  struct time AOldFall;
-  struct time AOldRise;
-  struct time BLatestFall;
-  struct time BLatestRise;
-  struct time BOldFall;
-  struct time BOldRise;
-  char * type;
-  
+	struct time ALatestFall;
+	struct time ALatestRise;
+	struct time AOldFall;
+	struct time AOldRise;
+	struct time BLatestFall;
+	struct time BLatestRise;
+	struct time BOldFall;
+	struct time BOldRise;
+	char type[6];
+
 	if (risenBeam == BEAM1){
 		ALatestFall = beam1FallLatest;
 		ALatestRise = beam1RiseLatest;
@@ -186,7 +218,7 @@ void eventAnalyzer (int risenBeam){
 		BOldFall = beam2FallOld;
 		BOldRise = beam2RiseOld;
 		
-		type = "ENTRY";
+		strcpy(type, "ENTRY");
 	} else {
 		//set the variables oppositely
 		ALatestFall = beam2FallLatest;
@@ -199,83 +231,110 @@ void eventAnalyzer (int risenBeam){
 		BOldFall = beam1FallOld;
 		BOldRise = beam1RiseOld;
 
-		type = "EXIT";
+		strcpy(type, "EXIT");
 	}
-	
-	
+
 	//A is the current beam being considered. B is the other beam.
 	//case 0
-		//only continue if time elapsed between 2 beams is less than threshold.
-		if((ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec >= TIME_OUT) && 
-		    (ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec <= TIME_OUT*-1)){
-			return;
-		}
+	//only continue if time elapsed between 2 beams is less than threshold.
+	if((ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec >= TIME_OUT) && 
+		(ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec <= TIME_OUT*-1)){
+		return;
+	}
 	//case 1
-		// if (BOldRise > ALatestFall){
-		// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) && 
-		// 		((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) > DELTA_TIME_OUT*-1)){
-		// 		//ENTRY and EXIT
-		// 		entryNumber +=1;
-		// 		exitNumber +=1;
-		// 		return;
-		// 	}			
-		// }
+	// if (BOldRise > ALatestFall){
+	// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) && 
+	// 		((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) > DELTA_TIME_OUT*-1)){
+	// 		//ENTRY and EXIT
+	// 		entryNumber +=1;
+	// 		exitNumber +=1;
+	// 		return;
+	// 	}			
+	// }
 	//case 2
-		if (isTimeGreater(AOldRise, BLatestFall)){
-			if((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
-			   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) < DELTA_TIME_OUT &&
-			   ((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
-			   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) > DELTA_TIME_OUT*-1)){
-				//ENTRY and EXIT
-				entryCount +=1;
-				exitCount +=1;
-				return;
-			}			
-		}
-	//case 3
-		if(isTimeGreater(ALatestFall, BLatestFall)){
-			//increment Entry/Exit # based on type
-			if (strcmp(type, "ENTRY")){
-				entryCount +=1;
-			} else {
-				exitCount +=1;
-			}
+	if (isTimeGreater(AOldRise, BLatestFall)){
+		if((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
+		   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) < DELTA_TIME_OUT &&
+		   ((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
+		   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) > DELTA_TIME_OUT*-1)){
+			//ENTRY and EXIT
+			entryCount +=1;
+			exitCount +=1;
 			return;
+		}			
+	}
+	//case 3
+	if(isTimeGreater(ALatestFall, BLatestFall)){
+		//increment Entry/Exit # based on type
+		if (strcmp(type, "ENTRY")){
+			entryCount +=1;
+		} else {
+			exitCount +=1;
 		}
-		printf("No event occurred. Why are we here???");
+		return;
+	}
+	printf("No event occurred. Why are we here???");
 }
 
-//returns a 1 if time1 is greater, or a 0 if time2 is greater
+
+/*
+ * Function: isTimeGreater
+ * ----------------------
+ * Sets the global variables to the current time
+ * 
+ * time1:
+ * time2:
+ *
+ * returns: a 1 if time1 is greater, or a 0 if time2 is greater
+ */
 int isTimeGreater (struct time time1, struct time time2){
-  if (time1.tv.tv_sec == time2.tv.tv_sec){
-    if(time1.tv.tv_usec > time2.tv.tv_sec){
-      return 1;
-    }
-  //if the seconds are equal then compare microseconds.
-  } else if (time1.tv.tv_sec > time2.tv.tv_sec){
-    return 1;   
-  } else
-    return 0;
+	if (time1.tv.tv_sec == time2.tv.tv_sec){
+		if(time1.tv.tv_usec > time2.tv.tv_usec){
+			return 1;
+		}
+	//if the seconds are equal then compare microseconds.
+	} else if (time1.tv.tv_sec > time2.tv.tv_sec){
+		return 1;   
+	}
+	return 0;	
 }
 
-//return the difference in microseconds between the two times given.
+
+/*
+ * Function: diffTimeMicro
+ * ----------------------
+ * utility function to intelligently get the difference in 
+ * microseconds between two time structs
+ * 
+ * time1: first time struct
+ * time2: second time struct
+ *
+ * returns: the difference in microseconds between the two times
+ */
 long diffTimeMicro (struct time time1, struct time time2){
-  //if seconds are equal just compare microseconds
-  if (time1.tv.tv_sec == time2.tv.tv_sec){
-      return abs(time1.tv.tv_usec - time2.tv.tv_usec);
-      
-  //if time1 has greater # of seconds then add the multiple to time2 and subtract from time1
-  } else if (time1.tv.tv_sec < time2.tv.tv_sec) {
-      int count = time2.tv.tv_sec - time1.tv.tv_sec;
-      return (count*1000000 + time2.tv.tv_usec) - time1.tv.tv_usec;
-      
-  //if time2 has greater # of seconds then add the multiple to time1 and subtract from time2
-  } else if (time1.tv.tv_sec > time2.tv.tv_sec){
-      int count = time1.tv.tv_sec - time2.tv.tv_sec;
-      return (count*1000000 + time1.tv.tv_usec) - time2.tv.tv_sec;
-  }
+	//if seconds are equal just compare microseconds
+	if (time1.tv.tv_sec == time2.tv.tv_sec){
+	  return abs(time1.tv.tv_usec - time2.tv.tv_usec);
+	  
+	//if time1 has greater # of seconds then add the multiple to time2 and subtract from time1
+	} else if (time1.tv.tv_sec < time2.tv.tv_sec) {
+	  int count = time2.tv.tv_sec - time1.tv.tv_sec;
+	  return (count*1000000 + time2.tv.tv_usec) - time1.tv.tv_usec;
+	  
+	//if time2 has greater # of seconds then add the multiple to time1 and subtract from time2
+	} else if (time1.tv.tv_sec > time2.tv.tv_sec){
+	  int count = time1.tv.tv_sec - time2.tv.tv_sec;
+	  return (count*1000000 + time1.tv.tv_usec) - time2.tv.tv_sec;
+	}
 }
 
+
+/*
+ * Code Graveyard
+ * ----------------------
+ * dead code that we might want to use later
+ */
+ 
 //Pi Machine Name/ID
 // char hostName[100];
 //gethostname(&hostName, 100);
