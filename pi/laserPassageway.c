@@ -19,6 +19,7 @@ void setTime (struct time *);
 void eventAnalyzer(int risenBeam);
 int isTimeGreater(struct time time1, struct time time2);
 long diffTimeMicro (struct time time1, struct time time2);
+void resetTime ();
 
 
 //pin numbers. B1 is entry. B2 is exit.
@@ -41,8 +42,8 @@ struct time beam2FallLatest;
 struct time * temp;
 
 //What is the ideal threshold?
-const int TIME_OUT = 3;
-const int DELTA_TIME_OUT = 10000;
+const int TIME_OUT = 1000000;
+const int DELTA_TIME_OUT = 1000000;
 
 //Tracks the number of events so they can be sent when alarm is called.
 int entryCount;
@@ -56,7 +57,7 @@ int main (void)
 {
   //set up for wiringPi
   wiringPiSetup();
-
+  
 
   pinMode(BEAM1,INPUT);
   pullUpDnControl(BEAM1,PUD_UP);
@@ -65,22 +66,6 @@ int main (void)
 
   wiringPiISR (BEAM1, INT_EDGE_BOTH, pinHandler1);
   wiringPiISR (BEAM2, INT_EDGE_BOTH, pinHandler2);
-
-  
-  //testing methods
-  struct time time1;
-  struct time time2;
- 
-  gettimeofday(&time1.tv, &time1.tz);
-  gettimeofday(&time2.tv, &time2.tz);
-  
-  time1.tv.tv_usec += 10000;
-  
-  int test = isTimeGreater(time1, time2);
-  
-  printf("%d\n", test);
-  //end testing time
-  
   
   while (1)
   {
@@ -97,13 +82,13 @@ int main (void)
 void pinHandler1 (void){
 	if (firstRise1){
 		firstRise1 = 0;
+		//printf("first rise\n");
 		return;
 	}
-	if (digitalRead(BEAM1)==1){
+	if (digitalRead(BEAM1)==0){
 		//if current read is a 1 then it was a fall
 		beam1FallOld = beam1FallLatest;
 		setTime(&beam1FallLatest);
-
 		//output time to test
 		//printf("Beam 1 fall at: ");
 		//printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);		
@@ -111,17 +96,18 @@ void pinHandler1 (void){
 		//if current read is a 0 then it was a rise
 			beam1RiseOld = beam1RiseLatest;
 			setTime(&beam1RiseLatest);
-
+			//printf("%d %d\n", isTimeGreater(beam1RiseLatest, beam2RiseLatest), isTimeGreater(beam2RiseLatest, beam2FallLatest));
 			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
-			if(beam1RiseLatest.tv.tv_sec > beam2RiseLatest.tv.tv_sec && beam2RiseLatest.tv.tv_sec > beam2FallLatest.tv.tv_sec){
+			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) && 
+			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
 				eventAnalyzer(BEAM1);
-				printf("Current number of entries: %d\n", entryCount);
-				printf("Current number of exits: %d\n\n", exitCount);
+				printf("Current number of entries: %d\t", entryCount);
+				printf("Current number of exits: %d\n", exitCount);
 			}
 
 			//output time to test
-			// printf("Beam 1 rise at: ");
-			// printf ("%ld %ld\n", beam1RiseLatest.tv.tv_sec, beam1RiseLatest.tv.tv_usec);		
+			 //printf("Beam 2: ");
+			 //printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2FallLatest.tv.tv_sec);		
 	}
 }
 
@@ -138,11 +124,10 @@ void pinHandler2 (void){
 		return;
 	}
 	
-	if (digitalRead(BEAM2)==1){
+	if (digitalRead(BEAM2)==0){
 		//if current read is a 1 then it was a fall
 		beam2FallOld = beam2FallLatest;
 		setTime(&beam2FallLatest);
-
 		//output time to test
 		//printf("Beam 2 fall at: ");
 		//printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);		
@@ -151,18 +136,18 @@ void pinHandler2 (void){
 		beam2RiseOld = beam2RiseLatest;
 		setTime(&beam2RiseLatest);
 		
-		printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
-		printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
+		//printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
+		//printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
-		if((beam2RiseLatest.tv.tv_usec > beam1RiseLatest.tv.tv_usec) && (beam1RiseLatest.tv.tv_usec > beam1FallLatest.tv.tv_usec)){
+		if((isTimeGreater(beam2RiseLatest, beam1RiseLatest) && isTimeGreater(beam1RiseLatest, beam1FallLatest))){
 			eventAnalyzer(BEAM2);
-			printf("Current number of entries: %d\n", entryCount);
-			printf("Current number of exits: %d\n\n", exitCount);
+			printf("Current number of entries: %d\t", entryCount);
+			printf("Current number of exits: %d\n", exitCount);
 		}
 
 		//output time to test
-		// printf("Beam 2 rise at: ");
-		// printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);		
+		//printf("Beam 2 rise at: ");
+		//printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);		
 	}
 }
 
@@ -237,8 +222,7 @@ void eventAnalyzer (int risenBeam){
 	//A is the current beam being considered. B is the other beam.
 	//case 0
 	//only continue if time elapsed between 2 beams is less than threshold.
-	if((ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec >= TIME_OUT) && 
-		(ALatestFall.tv.tv_sec - BLatestFall.tv.tv_sec <= TIME_OUT*-1)){
+	if((diffTimeMicro(ALatestFall, BLatestFall) >= TIME_OUT)){
 		return;
 	}
 	//case 1
@@ -253,13 +237,12 @@ void eventAnalyzer (int risenBeam){
 	// }
 	//case 2
 	if (isTimeGreater(AOldRise, BLatestFall)){
-		if((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
-		   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) < DELTA_TIME_OUT &&
-		   ((AOldFall.tv.tv_usec - BLatestFall.tv.tv_usec) - 
-		   (ALatestRise.tv.tv_usec - BLatestRise.tv.tv_usec) > DELTA_TIME_OUT*-1)){
+		if(diffTimeMicro(AOldFall, BLatestFall) - 
+		   diffTimeMicro(ALatestRise, BLatestRise) < DELTA_TIME_OUT){
 			//ENTRY and EXIT
 			entryCount +=1;
 			exitCount +=1;
+			resetTime();
 			return;
 		}			
 	}
@@ -271,6 +254,7 @@ void eventAnalyzer (int risenBeam){
 		} else {
 			exitCount +=1;
 		}
+		resetTime();
 		return;
 	}
 	printf("No event occurred. Why are we here???");
@@ -322,31 +306,28 @@ long diffTimeMicro (struct time time1, struct time time2){
 	  return (count*1000000 + time2.tv.tv_usec) - time1.tv.tv_usec;
 	  
 	//if time2 has greater # of seconds then add the multiple to time1 and subtract from time2
-	} else if (time1.tv.tv_sec > time2.tv.tv_sec){
+	} else {
 	  int count = time1.tv.tv_sec - time2.tv.tv_sec;
-	  return (count*1000000 + time1.tv.tv_usec) - time2.tv.tv_sec;
+	  return (count*1000000 + time1.tv.tv_usec) - time2.tv.tv_usec;
 	}
 }
 
 
 /*
- * Code Graveyard
+ * Function: resetTime
  * ----------------------
- * dead code that we might want to use later
+ * Prepares global variables for future time comparison
  */
- 
-//Pi Machine Name/ID
-// char hostName[100];
-//gethostname(&hostName, 100);
-
-//System Time
-//time_t rawTime; 
-
-//initialize buffer for system time
-//char buffer[26];
-//struct tm* tm_info;
-//time(&rawTime);
-//tm_info = localtime(&rawTime);
-//strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
-
+void resetTime(){
+  beam1FallOld = beam1FallLatest;
+  beam1RiseOld = beam1RiseLatest;
+  beam2FallOld = beam2FallLatest;
+  beam2RiseOld = beam2RiseLatest;
+  
+  struct time reset;
+  beam1FallLatest = reset;
+  beam1RiseLatest = reset;
+  beam2FallLatest = reset;
+  beam2RiseLatest = reset;
+}
 
