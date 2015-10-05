@@ -70,6 +70,9 @@ int main (void)
   while (1)
   {
 	wait(NULL);
+	int test = digitalRead(BEAM1);
+	printf("%d\n", test);
+	delay(100);
   }
 }
 
