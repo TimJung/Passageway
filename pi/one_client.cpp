@@ -21,7 +21,7 @@ int main(int argc, char*argv[]) {
 
   /* find the endpoint of port 5000 on the localhost */
   udp::endpoint destination = *res.resolve ({udp::v4(), 
-     "localhost", "5000"});
+     argv[1], "5000"});
   char test[6] = "Hello";
   sock.send_to (asio::buffer(test, 5), destination);
 
