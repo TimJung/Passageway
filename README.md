@@ -54,6 +54,10 @@ userid: passage
 password: LetMeIntoP13
 ```
 
+# Introduction to AllJoyn 
+
+[AllJoyn Tutorials](https://www.youtube.com/playlist?list=PL4IDeLjCA5CP7whTaPrEKBdXzj9Fa1-Fm)
+
 # Building AllJoyn on MASL
 
 The following environment variables should be set (in your `.profile` or `.bash_profile`)
