@@ -19,9 +19,9 @@ int main(int argc, char*argv[]) {
 
   udp::resolver res (ios);
 
-  /* find the endpoint of port 5000 on the localhost */
+  /* find the endpoint of port 44865 on the remote host */
   udp::endpoint destination = *res.resolve ({udp::v4(), 
-     argv[1], "5000"});
+     argv[1], "44865"});
   char test[6] = "Hello";
   sock.send_to (asio::buffer(test, 5), destination);
 
