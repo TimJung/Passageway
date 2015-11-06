@@ -53,13 +53,31 @@ int entryCount;
 int exitCount;
 ParseClient client;
 
+
+/*
+ * Function: alarmHandler
+ * ----------------------
+ * Handles the alarm
+ *
+ * sig: ???
+ */
 void alarmHandler(int sig)
 {
+  FILE *ifp;
   struct time end = gettimeofday(end.tv, end.tz);
-  char[10] pid = testMac01;
+  char[17] pid;
 
+  ifp = fopen("macAdr.txt", "r")
+  
+  if (ifp == NULL){
+	  fprintf(stderr, "Can't open input file macAdr.txt!\n");
+	  exit(1);
+  }
+  
+  while (fscanf(ifp, "%s", pid) !=EOF);
+  
   //create struct for data. pid, start, end, entryCount, exitCount
-
+  char[] data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
 
   entryCount = 0;
@@ -68,6 +86,46 @@ void alarmHandler(int sig)
   alarm(5);
 }
 
+/*
+ * Function: concatData
+ * ----------------------
+ * constructs a character array to send to Parse's data table
+ *
+ * pid: the MAC address of the Pi's WiFi dongle
+ * start: interval's start time
+ * end: intervals's end time
+ * in: amount of people entering in given time interval
+ * out: amount of people leaving in given time interval 
+ */
+char[] concatData(char[17] pid, long start, long end, int in, int out){
+	
+	char* result = concat("{ \"pid\": ", pid);
+	result = concat(result, ", \"start\": ");
+	result = concat(result, (char*)&start);
+	result = concat(result, ", \"end\": ");
+	result = concat(result, (char*)&end);
+	result = concat(result, ", \"in\": ");
+	result = concat(result, (char*)&in);
+	result = concat(result, ", \"out\": ");
+	result = concat(result, (char*)&out);
+	return &result;
+}
+
+/*
+ * Function: concat
+ * ----------------------
+ * concatinates two strings
+ *
+ * s1: first string
+ * s2: second string
+ */
+char* concat(char *s1, char *s2){
+    char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
+    //in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
 
 /*
  * Main method
