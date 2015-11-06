@@ -12,7 +12,7 @@
 
 int firstRise1 = 1;
 int firstRise2 = 1;
- 
+
 //function prototypes
 void pinHandler1 (void);
 void pinHandler2 (void);
@@ -42,6 +42,7 @@ struct time beam2RiseOld;
 struct time beam2RiseLatest;
 struct time beam2FallLatest;
 struct time * temp;
+struct time start;
 
 //What is the ideal threshold?
 const int TIME_OUT = 1000000;
@@ -50,15 +51,20 @@ const int DELTA_TIME_OUT = 1000000;
 //Tracks the number of events so they can be sent when alarm is called.
 int entryCount;
 int exitCount;
-
+ParseClient client;
 
 void alarmHandler(int sig)
 {
-  //code to send to Parse goes here
+  struct time end = gettimeofday(end.tv, end.tz);
+  char[10] pid = testMac01;
 
-  printf("ALARM\n");
+  //create struct for data. pid, start, end, entryCount, exitCount
+
+  parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
+
   entryCount = 0;
   exitCount = 0;
+  start = end;
   alarm(5);
 }
 
@@ -81,12 +87,11 @@ int main (void)
 
   //set up alarm
   signal(SIGALRM, alarmHandler);
+  setTime(start);
   alarm(5);
 
   //Parse
-  ParseClient client = parseInitialize(PARSE_APPID, PARSE_KEY);
-
-  parseSendRequest(client, "POST", "/1/classes/TestObject", "{\"foo\":\"bar\"}", NULL);
+  client = parseInitialize(PARSE_APPID, PARSE_KEY);
 
   while (1)
   {
