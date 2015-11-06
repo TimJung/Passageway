@@ -30,6 +30,13 @@ USB Wifi dongle
 * driver: rtl8192cu
 * RealTek SerialNumber 00e04c000001
 
+TrendNet Wifi
+D8:EB:97:2E:4C:0C => 35.40.131.139
+D8:EB:97:2E:4C:5B => 35.40.129.148
+D8:EB:97:2E:4D:EF => 35.40.128.97
+
+50:E5:49:71:d0:64 => 148.61.31.24
+
 ## Pidora Setup to connect to GVSU-Guest
 
 
@@ -46,7 +53,16 @@ gateway 148.xxx.xxx.xxx
 
 # Introduction to AllJoyn 
 
-[AllJoyn Tutorials](https://www.youtube.com/playlist?list=PL4IDeLjCA5CP7whTaPrEKBdXzj9Fa1-Fm)
+[AllJoyn Video Tutorials](https://www.youtube.com/playlist?list=PL4IDeLjCA5CP7whTaPrEKBdXzj9Fa1-Fm)
+
+API Documentations:
+
+
+* [AllJoyn Core Java APIs](http://allseenalliance.org/framework/documentation/develop/api-guide/about/java)
+* [AllJoyn Core C++
+APIs](http://allseenalliance.org/framework/documentation/develop/api-guide/about/cpp)
+* [AllJoyn C Thin Core
+APIs](http://allseenalliance.org/framework/documentation/develop/api-guide/about/c-thin)
 
 # Building AllJoyn on MASL
 
