@@ -7,10 +7,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <parse.h>
+#include "parse_secret.h"
 
 int firstRise1 = 1;
 int firstRise2 = 1;
-
+ 
 //function prototypes
 void pinHandler1 (void);
 void pinHandler2 (void);
@@ -50,6 +52,17 @@ int entryCount;
 int exitCount;
 
 
+void alarmHandler(int sig)
+{
+  //code to send to Parse goes here
+
+  printf("ALARM\n");
+  entryCount = 0;
+  exitCount = 0;
+  alarm(5);
+}
+
+
 /*
  * Main method
  */
@@ -57,7 +70,6 @@ int main (void)
 {
   //set up for wiringPi
   wiringPiSetup();
-  
 
   pinMode(BEAM1,INPUT);
   pullUpDnControl(BEAM1,PUD_UP);
@@ -66,13 +78,22 @@ int main (void)
 
   wiringPiISR (BEAM1, INT_EDGE_BOTH, pinHandler1);
   wiringPiISR (BEAM2, INT_EDGE_BOTH, pinHandler2);
-  
+
+  //set up alarm
+  signal(SIGALRM, alarmHandler);
+  alarm(5);
+
+  //Parse
+  ParseClient client = parseInitialize(PARSE_APPID, PARSE_KEY);
+
+  parseSendRequest(client, "POST", "/1/classes/TestObject", "{\"foo\":\"bar\"}", NULL);
+
   while (1)
   {
-	wait(NULL);
-	int test = digitalRead(BEAM1);
-	printf("%d\n", test);
-	delay(100);
+	//wait(NULL);
+	//int test = digitalRead(BEAM1);
+	//printf("%d\n", test);
+	//delay(100);
   }
 }
 
@@ -104,8 +125,8 @@ void pinHandler1 (void){
 			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) && 
 			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
 				eventAnalyzer(BEAM1);
-				printf("Current number of entries: %d\t", entryCount);
-				printf("Current number of exits: %d\n", exitCount);
+				//printf("Current number of entries: %d\t", entryCount);
+				//printf("Current number of exits: %d\n", exitCount);
 			}
 
 			//output time to test
@@ -121,12 +142,12 @@ void pinHandler1 (void){
  * Handles the interupt when beam 1's state changes
  */
 void pinHandler2 (void){
-	
+
 	if (firstRise2){
 		firstRise2 = 0;
 		return;
 	}
-	
+
 	if (digitalRead(BEAM2)==0){
 		//if current read is a 1 then it was a fall
 		beam2FallOld = beam2FallLatest;
@@ -138,14 +159,14 @@ void pinHandler2 (void){
 		//if current read is a 0 then it was a rise
 		beam2RiseOld = beam2RiseLatest;
 		setTime(&beam2RiseLatest);
-		
+
 		//printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
 		//printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
 		if((isTimeGreater(beam2RiseLatest, beam1RiseLatest) && isTimeGreater(beam1RiseLatest, beam1FallLatest))){
 			eventAnalyzer(BEAM2);
-			printf("Current number of entries: %d\t", entryCount);
-			printf("Current number of exits: %d\n", exitCount);
+			//printf("Current number of entries: %d\t", entryCount);
+			//printf("Current number of exits: %d\n", exitCount);
 		}
 
 		//output time to test
@@ -200,12 +221,12 @@ void eventAnalyzer (int risenBeam){
 		ALatestRise = beam1RiseLatest;
 		AOldFall = beam1FallOld;
 		AOldRise = beam1RiseOld;
-		
+
 		BLatestFall = beam2FallLatest;
 		BLatestRise = beam2RiseLatest;
 		BOldFall = beam2FallOld;
 		BOldRise = beam2RiseOld;
-		
+
 		strcpy(type, "ENTRY");
 	} else {
 		//set the variables oppositely
@@ -213,7 +234,7 @@ void eventAnalyzer (int risenBeam){
 		ALatestRise	= beam2RiseLatest;
 		AOldFall = beam2FallOld;
 		AOldRise = beam2RiseOld;
-		
+
 		BLatestFall = beam1FallLatest;
 		BLatestRise = beam1RiseLatest;
 		BOldFall = beam1FallOld;
@@ -236,18 +257,18 @@ void eventAnalyzer (int risenBeam){
 	// 		entryNumber +=1;
 	// 		exitNumber +=1;
 	// 		return;
-	// 	}			
+	// 	}
 	// }
 	//case 2
 	if (isTimeGreater(AOldRise, BLatestFall)){
-		if(diffTimeMicro(AOldFall, BLatestFall) - 
+		if(diffTimeMicro(AOldFall, BLatestFall) -
 		   diffTimeMicro(ALatestRise, BLatestRise) < DELTA_TIME_OUT){
 			//ENTRY and EXIT
 			entryCount +=1;
 			exitCount +=1;
 			resetTime();
 			return;
-		}			
+		}
 	}
 	//case 3
 	if(isTimeGreater(ALatestFall, BLatestFall)){
@@ -268,7 +289,7 @@ void eventAnalyzer (int risenBeam){
  * Function: isTimeGreater
  * ----------------------
  * Sets the global variables to the current time
- * 
+ *
  * time1:
  * time2:
  *
@@ -281,18 +302,18 @@ int isTimeGreater (struct time time1, struct time time2){
 		}
 	//if the seconds are equal then compare microseconds.
 	} else if (time1.tv.tv_sec > time2.tv.tv_sec){
-		return 1;   
+		return 1;
 	}
-	return 0;	
+	return 0;
 }
 
 
 /*
  * Function: diffTimeMicro
  * ----------------------
- * utility function to intelligently get the difference in 
+ * utility function to intelligently get the difference in
  * microseconds between two time structs
- * 
+ *
  * time1: first time struct
  * time2: second time struct
  *
@@ -302,12 +323,12 @@ long diffTimeMicro (struct time time1, struct time time2){
 	//if seconds are equal just compare microseconds
 	if (time1.tv.tv_sec == time2.tv.tv_sec){
 	  return abs(time1.tv.tv_usec - time2.tv.tv_usec);
-	  
+
 	//if time1 has greater # of seconds then add the multiple to time2 and subtract from time1
 	} else if (time1.tv.tv_sec < time2.tv.tv_sec) {
 	  int count = time2.tv.tv_sec - time1.tv.tv_sec;
 	  return (count*1000000 + time2.tv.tv_usec) - time1.tv.tv_usec;
-	  
+
 	//if time2 has greater # of seconds then add the multiple to time1 and subtract from time2
 	} else {
 	  int count = time1.tv.tv_sec - time2.tv.tv_sec;
@@ -326,7 +347,7 @@ void resetTime(){
   beam1RiseOld = beam1RiseLatest;
   beam2FallOld = beam2FallLatest;
   beam2RiseOld = beam2RiseLatest;
-  
+
   struct time reset;
   beam1FallLatest = reset;
   beam1RiseLatest = reset;
