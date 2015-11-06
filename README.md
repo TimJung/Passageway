@@ -4,8 +4,7 @@
 
 1. Install NOOBS v 1.4 (or newer)
 2. Connect the Pi to a **wired** connection. With a wired connection NOOBS will show more OS choices.
-3. Select the OSes that you want to Install (Pidora seems to be the distro
-   that works with the RealTek Wifi dongle)
+3. Select the OSes that you want to install
 4. On the next boot time, a boot menu will showup
 
 ## Troubleshooting
@@ -36,22 +35,13 @@ USB Wifi dongle
 
 Add the following lines to `/etc/network/interfaces`
 
-_This section requires an update we have the new Wifi dongle_
+_This section requires an update when we have the new Wifi dongle_
 ```
 auto wlan0
 iface wlan0 inet static
 address 148.xxx.xxx.xxx
 netmask 255.255.255.0
 gateway 148.xxx.xxx.xxx
-```
-
-## Login
-_this section needs an update_
-
-On peacanpi (running Pidora)
-```
-userid: passage
-password: LetMeIntoP13
 ```
 
 # Introduction to AllJoyn 
