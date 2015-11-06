@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <parse.h>
+#include "parse_secret.h"
 
 int firstRise1 = 1;
 int firstRise2 = 1;
@@ -81,6 +82,11 @@ int main (void)
   //set up alarm
   signal(SIGALRM, alarmHandler);
   alarm(5);
+
+  //Parse
+  ParseClient client = parseInitialize(PARSE_APPID, PARSE_KEY);
+
+  parseSendRequest(client, "POST", "/1/classes/TestObject", "{\"foo\":\"bar\"}", NULL);
 
   while (1)
   {
