@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="PassageWay:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="passage.war">
+      <element id="artifact" artifact-name="PassageWay:war exploded" />
+    </root>
+  </artifact>
+</component>
