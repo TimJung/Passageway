@@ -22,7 +22,8 @@ void eventAnalyzer(int risenBeam);
 int isTimeGreater(struct time time1, struct time time2);
 long diffTimeMicro (struct time time1, struct time time2);
 void resetTime ();
-
+char* concatData(char pid[17], long start, long end, int in, int out);
+char* concat(char* s1, char* s2);
 
 //pin numbers. B1 is entry. B2 is exit.
 const int BEAM1 = 1;
@@ -64,22 +65,22 @@ ParseClient client;
 void alarmHandler(int sig)
 {
   FILE *ifp;
-  struct time end = gettimeofday(end.tv, end.tz);
-  char[17] pid;
+  struct time end;
+  setTime(&end);
+  char pid[17] = "string";
 
-  ifp = fopen("macAdr.txt", "r")
-  
+  ifp = fopen("macAdr.txt", "r");
   if (ifp == NULL){
 	  fprintf(stderr, "Can't open input file macAdr.txt!\n");
 	  exit(1);
   }
   
-  while (fscanf(ifp, "%s", pid) !=EOF);
+  while (fscanf(ifp, "%s", pid) != EOF);
   
   //create struct for data. pid, start, end, entryCount, exitCount
-  char[] data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
+  char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
-
+  printf("%s\n", data);
   entryCount = 0;
   exitCount = 0;
   start = end;
@@ -95,20 +96,26 @@ void alarmHandler(int sig)
  * start: interval's start time
  * end: intervals's end time
  * in: amount of people entering in given time interval
- * out: amount of people leaving in given time interval 
+ * out: amount of people leaving in given time interval
  */
-char[] concatData(char[17] pid, long start, long end, int in, int out){
-	
-	char* result = concat("{ \"pid\": ", pid);
+char* concatData(char pid[17], long start, long end, int in, int out){
+	char str [20];
+	sprintf(str, "\"%s\"", pid);
+	char* result = concat("{ \"pid\": ", str);
 	result = concat(result, ", \"start\": ");
-	result = concat(result, (char*)&start);
+	sprintf(str, "%lu", start);
+	result = concat(result, str);
 	result = concat(result, ", \"end\": ");
-	result = concat(result, (char*)&end);
+	sprintf(str, "%lu", end);
+	result = concat(result, str);
 	result = concat(result, ", \"in\": ");
-	result = concat(result, (char*)&in);
+	sprintf(str, "%d", in);
+	result = concat(result, str);
 	result = concat(result, ", \"out\": ");
-	result = concat(result, (char*)&out);
-	return &result;
+	sprintf(str, "%d", out);
+	result = concat(result, str);
+	result = concat(result, " }");
+	return result;
 }
 
 /*
@@ -145,7 +152,7 @@ int main (void)
 
   //set up alarm
   signal(SIGALRM, alarmHandler);
-  setTime(start);
+  setTime(&start);
   alarm(5);
 
   //Parse
