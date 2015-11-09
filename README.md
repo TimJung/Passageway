@@ -97,15 +97,12 @@ cd $ALLJOYN_TOPDIR/services/base/sample_apps
 scons BINDING=cpp WS=off ALL=1
 ```
 
-## Building the documentations
 
-The documentation files can be found under `$ALLJOYN_TOPDIR/core/alljoyn/alljoyn_core/docs`
-
-_this section has not been tested yet_
+### Running the Polymer WebClient
 
 ```
-sudo apt-get install texlive
-cd $ALLJOTYN_TOPDIR/core/alljoyn
-scons DOCS=pdf
+cd webapp
+gulp serve
 ```
 
+Then use your web browser to open http://localhost:5000
