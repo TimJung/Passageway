@@ -21,16 +21,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <v-grid selection-mode="single">
       <table border="1" cellspacing="0" cellpadding="4">
         <colgroup>
-          <col header-text="MAC addr">
-          <col header-text="Start Time">
-          <col header-text="End Time">
+          <col><col><col><col>
         </colgroup>
+        <thead>
+          <tr>
+            <th>MAC Addr</th>
+            <th colspan=2>Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
         <tbody>
           <template is="dom-repeat" items="{{sensorData}}">
             <tr>
               <td>{{item.macaddr}}</td>
               <td>{{item.startTime}}</td>
               <td>{{item.endTime}}</td>
+              <td>{{item.duration}}</td>
             </tr>
           </template>
         </tbody>
@@ -59,6 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             macaddr: sData.get('pid'),
             startTime: sData.get('start'),
             endTime: sData.get('end'),
+            duration: (sData.get('end') - sData.get('start')),
           });
         }
       },
