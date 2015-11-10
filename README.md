@@ -102,6 +102,7 @@ scons BINDING=cpp WS=off ALL=1
 
 ```
 cd webapp
+bower install   # only if the bower_components directory is missing
 gulp serve
 ```
 
