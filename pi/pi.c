@@ -53,7 +53,9 @@ const int DELTA_TIME_OUT = 1000000;
 int entryCount;
 int exitCount;
 ParseClient client;
-
+/* TODO: use the following global array for writing JSON 
+   string of the Parse object, is 200 bytes big enough? */
+char parseObjJSON[200];
 
 /*
  * Function: alarmHandler
@@ -80,6 +82,14 @@ void alarmHandler(int sig)
   //create struct for data. pid, start, end, entryCount, exitCount
   char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
+  /* TODO replace concatData with the following sprintf,
+     and declare parseObjJSON globally */
+#if 0
+  sprintf (parseObjJSON,
+          "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
+          pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
+  parseSendRequest(client, "POST", "/1/classes/data", parseObjJSON, NULL);
+#endif
   printf("%s\n", data);
   entryCount = 0;
   exitCount = 0;
@@ -98,6 +108,9 @@ void alarmHandler(int sig)
  * in: amount of people entering in given time interval
  * out: amount of people leaving in given time interval
  */
+
+/* TODO: remove concatData and concat
+   */
 char* concatData(char pid[17], long start, long end, int in, int out){
 	char str [20];
 	sprintf(str, "\"%s\"", pid);
@@ -127,6 +140,7 @@ char* concatData(char pid[17], long start, long end, int in, int out){
  * s2: second string
  */
 char* concat(char *s1, char *s2){
+    /*!!! memory leak here, program WILL crash !!!*/
     char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
     //in real code you would check for errors in malloc here
     strcpy(result, s1);
