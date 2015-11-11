@@ -81,6 +81,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <span>Table</span>
           </a>
 
+          <a data-route="filter" href="/filter" on-click="onDataRouteClick">
+            <iron-icon icon="filter-list"></iron-icon>
+            <span>Filter Test</span>
+          </a>
+
           <a data-route="users" href="/users" on-click="onDataRouteClick">
             <iron-icon icon="info"></iron-icon>
             <span>Users</span>
@@ -133,6 +138,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <section data-route="table">
               <foot-traffic></foot-traffic>
+            </section>
+
+            <section data-route="filter">
+              <filter-view></filter-view>
             </section>
 
             <section data-route="users">
