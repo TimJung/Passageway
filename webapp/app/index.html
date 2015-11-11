@@ -76,9 +76,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Drawer Content -->
         <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="traffic" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="settings"></iron-icon>
-            <span>Foot Traffic</span>
+          <a data-route="table" href="/" on-click="onDataRouteClick">
+            <iron-icon icon="view-list"></iron-icon>
+            <span>Table</span>
           </a>
 
           <a data-route="users" href="/users" on-click="onDataRouteClick">
@@ -112,17 +112,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <!--<paper-icon-button icon="refresh"></paper-icon-button>-->
+          <!--<paper-icon-button icon="search"></paper-icon-button>-->
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
-            <div class="app-name">PassageWay</div>
+            <div class="app-name">Passageway</div>
           </div>
 
           <!-- Application sub title -->
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead">Virtual gate to a digital world</div>
+            <div class="bottom-title app-subhead">{{route}}</div>
           </div>
 
         </paper-toolbar>
@@ -131,13 +131,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="traffic">
-              <paper-material elevation="1">
-                This is the Home section
-                <p class="paper-font-body2">Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material>
+            <section data-route="table">
               <foot-traffic></foot-traffic>
-
             </section>
 
             <section data-route="users">
