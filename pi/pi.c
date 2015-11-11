@@ -53,7 +53,7 @@ const int DELTA_TIME_OUT = 1000000;
 int entryCount;
 int exitCount;
 ParseClient client;
-/* TODO: use the following global array for writing JSON 
+/* TODO: use the following global array for writing JSON
    string of the Parse object, is 200 bytes big enough? */
 char parseObjJSON[200];
 
@@ -76,9 +76,9 @@ void alarmHandler(int sig)
 	  fprintf(stderr, "Can't open input file macAdr.txt!\n");
 	  exit(1);
   }
-  
+
   while (fscanf(ifp, "%s", pid) != EOF);
-  
+
   //create struct for data. pid, start, end, entryCount, exitCount
   char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
@@ -140,9 +140,8 @@ char* concatData(char pid[17], long start, long end, int in, int out){
  * s2: second string
  */
 char* concat(char *s1, char *s2){
-    /*!!! memory leak here, program WILL crash !!!*/
-    char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
-    //in real code you would check for errors in malloc here
+    /*!!!UNTESTED CODE!!!*/
+    char result[strlen(s1)+strlen(s2)+1];
     strcpy(result, s1);
     strcat(result, s2);
     return result;
@@ -199,14 +198,14 @@ void pinHandler1 (void){
 		setTime(&beam1FallLatest);
 		//output time to test
 		//printf("Beam 1 fall at: ");
-		//printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);		
+		//printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);
 	} else {
 		//if current read is a 0 then it was a rise
 			beam1RiseOld = beam1RiseLatest;
 			setTime(&beam1RiseLatest);
 			//printf("%d %d\n", isTimeGreater(beam1RiseLatest, beam2RiseLatest), isTimeGreater(beam2RiseLatest, beam2FallLatest));
 			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
-			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) && 
+			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) &&
 			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
 				eventAnalyzer(BEAM1);
 				//printf("Current number of entries: %d\t", entryCount);
@@ -215,7 +214,7 @@ void pinHandler1 (void){
 
 			//output time to test
 			 //printf("Beam 2: ");
-			 //printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2FallLatest.tv.tv_sec);		
+			 //printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2FallLatest.tv.tv_sec);
 	}
 }
 
@@ -238,7 +237,7 @@ void pinHandler2 (void){
 		setTime(&beam2FallLatest);
 		//output time to test
 		//printf("Beam 2 fall at: ");
-		//printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);		
+		//printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);
 	} else {
 		//if current read is a 0 then it was a rise
 		beam2RiseOld = beam2RiseLatest;
@@ -255,7 +254,7 @@ void pinHandler2 (void){
 
 		//output time to test
 		//printf("Beam 2 rise at: ");
-		//printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);		
+		//printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);
 	}
 }
 
@@ -264,7 +263,7 @@ void pinHandler2 (void){
  * Function: setTime
  * ----------------------
  * Sets the global variables to the current time
- * 
+ *
  * ptr: the time struct that is set to the current time
  */
 void setTime(struct time * ptr){
@@ -285,11 +284,11 @@ void setTime(struct time * ptr){
  * Function: eventAnalyzer
  * ----------------------
  * Logic that makes the decision on what to do based on rise and fall of each beam.
- * 
+ *
  * risenBeam: The beam that has been detected as risen
  */
 void eventAnalyzer (int risenBeam){
-  
+
 	struct time ALatestFall;
 	struct time ALatestRise;
 	struct time AOldFall;
@@ -335,7 +334,7 @@ void eventAnalyzer (int risenBeam){
 	}
 	//case 1
 	// if (BOldRise > ALatestFall){
-	// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) && 
+	// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) &&
 	// 		((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) > DELTA_TIME_OUT*-1)){
 	// 		//ENTRY and EXIT
 	// 		entryNumber +=1;
