@@ -1,0 +1,24 @@
+<!-- shared styles for all elements and index.html -->
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      .page-title {
+        @apply(--paper-font-display2);
+      }
+
+      @media (max-width: 600px) {
+        .page-title {
+          font-size: 24px!important;
+        }
+      }
+<<<<<<< HEAD
+=======
+
+      .app-name, .app-subhead{
+        font-family: 'Roboto Thin', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+>>>>>>> edf91d1c6723c931dd4fb173802fc40559fad687
+    </style>
+  </template>
+</dom-module>
