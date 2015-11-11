@@ -15,10 +15,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
-  <title>Passage Way</title>
+  <meta name="generator" content="Passageway" />
+  <title>Passageway</title>
   <!-- Place favicon.ico in the `app/` directory -->
-
+  <link rel="shortcut icon" href="favicon.ico"  type="image/ico"/>
   <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#2E3AA1">
 
@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <meta name="apple-mobile-web-app-title" content="Passageway">
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
   <!-- Tile icon for Win8 (144x144) -->
@@ -76,9 +76,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <!-- Drawer Content -->
         <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="traffic" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="settings"></iron-icon>
-            <span>Foot Traffic</span>
+          <a data-route="table" href="/" on-click="onDataRouteClick">
+            <iron-icon icon="view-list"></iron-icon>
+            <span>Table</span>
+          </a>
+
+          <a data-route="filter" href="/filter" on-click="onDataRouteClick">
+            <iron-icon icon="filter-list"></iron-icon>
+            <span>Filter Test</span>
           </a>
 
           <a data-route="users" href="/users" on-click="onDataRouteClick">
@@ -112,17 +117,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <!--<paper-icon-button icon="refresh"></paper-icon-button>-->
+          <!--<paper-icon-button icon="search"></paper-icon-button>-->
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
-            <div class="app-name">PassageWay</div>
+            <div class="app-name">Passageway</div>
           </div>
 
           <!-- Application sub title -->
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title paper-font-subhead">Virtual gate to a digital world</div>
+            <div class="bottom-title app-subhead">{{route}}</div>
           </div>
 
         </paper-toolbar>
@@ -131,13 +136,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="traffic">
-              <paper-material elevation="1">
-                This is the Home section
-                <p class="paper-font-body2">Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material>
+            <section data-route="table">
               <foot-traffic></foot-traffic>
+            </section>
 
+            <section data-route="filter">
+              <filter-view></filter-view>
             </section>
 
             <section data-route="users">

@@ -53,7 +53,7 @@ const int DELTA_TIME_OUT = 1000000;
 int entryCount;
 int exitCount;
 ParseClient client;
-/* TODO: use the following global array for writing JSON
+/* TODO: use the following global array for writing JSON 
    string of the Parse object, is 200 bytes big enough? */
 char parseObjJSON[200];
 
@@ -145,6 +145,7 @@ char* concat(char *s1, char *s2){
     strcpy(result, s1);
     strcat(result, s2);
     return result;
+}
 }
 
 /*
