@@ -8,24 +8,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="stylesheet" type="text/css" href="../../styles/table.css">
 
 <dom-module id="foot-traffic">
   <template>
     <div class="table-responsive-vertical shadow-z-1">
-      <v-grid selection-mode="single">
-        <table class="table table-hover table-mc-light-blue">
-          <colgroup>
-            <col><col><col><col>
-          </colgroup>
+      <!--<v-grid selection-mode="single">-->
+        <table id="data" class="table table-hover table-mc-light-blue">
           <thead>
             <tr>
               <th>MAC Addr</th>
               <th>Start</th>
               <th>End</th>
               <th>Duration</th>
+              <th>Entries</th>
+              <th>Exits</th>
             </tr>
           </thead>
           <tbody>
@@ -35,11 +34,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <td>{{item.startTime}}</td>
                 <td>{{item.endTime}}</td>
                 <td>{{item.duration}}</td>
+                <td>{{item.entries}}</td>
+                <td>{{item.exits}}</td>
               </tr>
             </template>
           </tbody>
         </table>
-      </v-grid>
+      <!--</v-grid>-->
     </div>
   </template>
   <script>
@@ -65,6 +66,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             startTime: sData.get('start'),
             endTime: sData.get('end'),
             duration: (sData.get('end') - sData.get('start')),
+            entries: sData.get('in'),
+            exits: sData.get('out')
+
           });
         }
       },
