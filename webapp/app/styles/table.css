@@ -19,7 +19,6 @@ body {
 html {
   position: relative;
   overflow-x: hidden;
-  margin: 16px;
   padding: 0;
   min-height: 100%;
   font-size: 62.5%;
