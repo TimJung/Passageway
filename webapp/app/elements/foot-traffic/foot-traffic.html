@@ -1,0 +1,86 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+
+<dom-module id="foot-traffic">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <v-grid selection-mode="single">
+      <table border="1" cellspacing="0" cellpadding="4">
+        <colgroup>
+          <col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>MAC Addr</th>
+            <th colspan=2>Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="{{sensorData}}">
+            <tr>
+              <td>{{item.macaddr}}</td>
+              <td>{{item.startTime}}</td>
+              <td>{{item.endTime}}</td>
+              <td>{{item.duration}}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </v-grid>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'foot-traffic',
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'foot-traffic',
+          notify: true
+        }
+      },
+      _dataLoaded: function(results) {
+        this.sensorData = [];
+        for (var k = 0; k < results.length; k++) {
+          var sData = results[k];
+          this.push('sensorData',{
+            macaddr: sData.get('pid'),
+            startTime: sData.get('start'),
+            endTime: sData.get('end'),
+            duration: (sData.get('end') - sData.get('start')),
+          });
+        }
+      },
+      _dataErr: function(err) {
+        alert ("Error loading Parse data ", err);
+      },
+      ready: function() {
+        var dataObj = Parse.Object.extend("data");
+        var query = new Parse.Query (dataObj);
+        query.find().done(
+          this._dataLoaded.bind(this),
+          this._dataErr.bind(this)
+        );
+      }
+    });
+  })();
+  </script>
+</dom-module>
