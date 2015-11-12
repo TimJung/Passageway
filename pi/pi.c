@@ -53,8 +53,6 @@ const int DELTA_TIME_OUT = 1000000;
 int entryCount;
 int exitCount;
 ParseClient client;
-/* TODO: use the following global array for writing JSON
-   string of the Parse object, is 200 bytes big enough? */
 char parseObjJSON[200];
 
 /*
@@ -79,14 +77,7 @@ void alarmHandler(int sig)
 
   while (fscanf(ifp, "%s", pid) != EOF);
 
-  //create struct for data. pid, start, end, entryCount, exitCount
- // char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
- // parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
-          pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
-  //concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
-  /* TODO replace concatData with the following sprintf,
-     and declare parseObjJSON globally */
-
+  //put info into JSON formatted string
   sprintf (parseObjJSON,
           "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
           pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
@@ -98,57 +89,6 @@ void alarmHandler(int sig)
   start = end;
   alarm(20);
 }
-
-/*
- * Function: concatData
- * ----------------------
- * constructs a character array to send to Parse's data table
- *
- * pid: the MAC address of the Pi's WiFi dongle
- * start: interval's start time
- * end: intervals's end time
- * in: amount of people entering in given time interval
- * out: amount of people leaving in given time interval
- */
-
-/* TODO: remove concatData and concat
-  
-char* concatData(char pid[17], long start, long end, int in, int out){
-	char str [20];
-	sprintf(str, "\"%s\"", pid);
-	char* result = concat("{ \"pid\": ", str);
-	result = concat(result, ", \"start\": ");
-	sprintf(str, "%lu", start);
-	result = concat(result, str);
-	result = concat(result, ", \"end\": ");
-	sprintf(str, "%lu", end);
-	result = concat(result, str);
-	result = concat(result, ", \"in\": ");
-	sprintf(str, "%d", in);
-	result = concat(result, str);
-	result = concat(result, ", \"out\": ");
-	sprintf(str, "%d", out);
-	result = concat(result, str);
-	result = concat(result, " }");
-	return result;
-}
-*/
-
-/*
- * Function: concat
- * ----------------------
- * concatinates two strings
- *
- * s1: first string
- * s2: second string
-
-char* concat(char *s1, char *s2){
-    /*!!!UNTESTED CODE!!!
-    char result[strlen(s1)+strlen(s2)+1];
-    strcpy(result, s1);
-    strcat(result, s2);
-    return result;
-}*/
 
 /*
  * Main method
@@ -176,13 +116,8 @@ int main (void)
 
   while (1)
   {
-	//wait(NULL);
-	//int test = digitalRead(BEAM1);
-	//printf("%d\n", test);
-	//delay(100);
   }
 }
-
 
 /*
  * Function: pinHandler1
@@ -192,35 +127,23 @@ int main (void)
 void pinHandler1 (void){
 	if (firstRise1){
 		firstRise1 = 0;
-		//printf("first rise\n");
 		return;
 	}
 	if (digitalRead(BEAM1)==0){
 		//if current read is a 1 then it was a fall
 		beam1FallOld = beam1FallLatest;
 		setTime(&beam1FallLatest);
-		//output time to test
-		//printf("Beam 1 fall at: ");
-		//printf ("%ld %ld\n", beam1FallLatest.tv.tv_sec, beam1FallLatest.tv.tv_usec);
 	} else {
 		//if current read is a 0 then it was a rise
 			beam1RiseOld = beam1RiseLatest;
 			setTime(&beam1RiseLatest);
-			//printf("%d %d\n", isTimeGreater(beam1RiseLatest, beam2RiseLatest), isTimeGreater(beam2RiseLatest, beam2FallLatest));
 			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
 			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) &&
 			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
 				eventAnalyzer(BEAM1);
-				//printf("Current number of entries: %d\t", entryCount);
-				//printf("Current number of exits: %d\n", exitCount);
 			}
-
-			//output time to test
-			 //printf("Beam 2: ");
-			 //printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2FallLatest.tv.tv_sec);
 	}
 }
-
 
 /*
  * Function: pinHandler2
@@ -238,29 +161,17 @@ void pinHandler2 (void){
 		//if current read is a 1 then it was a fall
 		beam2FallOld = beam2FallLatest;
 		setTime(&beam2FallLatest);
-		//output time to test
-		//printf("Beam 2 fall at: ");
-		//printf ("%ld %ld\n", beam2FallLatest.tv.tv_sec, beam2FallLatest.tv.tv_usec);
 	} else {
 		//if current read is a 0 then it was a rise
 		beam2RiseOld = beam2RiseLatest;
 		setTime(&beam2RiseLatest);
 
-		//printf("Greater Than: %ld %ld", beam2RiseLatest.tv.tv_usec, beam1RiseLatest.tv.tv_usec);
-		//printf("    AND Greater Than: %ld %ld\n", beam1RiseLatest.tv.tv_usec, beam1FallLatest.tv.tv_usec);
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
 		if((isTimeGreater(beam2RiseLatest, beam1RiseLatest) && isTimeGreater(beam1RiseLatest, beam1FallLatest))){
 			eventAnalyzer(BEAM2);
-			//printf("Current number of entries: %d\t", entryCount);
-			//printf("Current number of exits: %d\n", exitCount);
 		}
-
-		//output time to test
-		//printf("Beam 2 rise at: ");
-		//printf ("%ld %ld\n", beam2RiseLatest.tv.tv_sec, beam2RiseLatest.tv.tv_usec);
 	}
 }
-
 
 /*
  * Function: setTime
@@ -274,14 +185,10 @@ void setTime(struct time * ptr){
 	struct timeval tv1 = t1.tv;
 	struct timezone tz1 = t1.tz;
 	gettimeofday (&tv1, &tz1);
-//	gettimeofday (ptr.tv, ptr.tz);
-//	printf ("%ld %ld\n", tv.tv_sec, tv.tv_usec);
-//	printf ("%ld %ld\n", tv1.tv_sec, tv1.tv_usec);
 	t1.tv = tv1;
 	t1.tz = tz1;
 	*ptr = t1;
 }
-
 
 /*
  * Function: eventAnalyzer
@@ -291,7 +198,6 @@ void setTime(struct time * ptr){
  * risenBeam: The beam that has been detected as risen
  */
 void eventAnalyzer (int risenBeam){
-
 	struct time ALatestFall;
 	struct time ALatestRise;
 	struct time AOldFall;
@@ -375,7 +281,6 @@ void eventAnalyzer (int risenBeam){
     //        ALatestFall.tv, ALatestRise.tv, AOldFall.tv, AOldRise.tv, BLatestFall.tv, BLatestRise.tv, BOldFall.tv, BOldRise.tv)
 }
 
-
 /*
  * Function: isTimeGreater
  * ----------------------
@@ -397,7 +302,6 @@ int isTimeGreater (struct time time1, struct time time2){
 	}
 	return 0;
 }
-
 
 /*
  * Function: diffTimeMicro
@@ -427,7 +331,6 @@ long diffTimeMicro (struct time time1, struct time time2){
 	}
 }
 
-
 /*
  * Function: resetTime
  * ----------------------
@@ -445,4 +348,3 @@ void resetTime(){
   beam2FallLatest = reset;
   beam2RiseLatest = reset;
 }
-
