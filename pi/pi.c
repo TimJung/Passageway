@@ -80,24 +80,23 @@ void alarmHandler(int sig)
   while (fscanf(ifp, "%s", pid) != EOF);
 
   //create struct for data. pid, start, end, entryCount, exitCount
-  char* data = sprintf (parseObjJSON,
-          "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
+ // char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
+ // parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
           pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   //concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
-  parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
   /* TODO replace concatData with the following sprintf,
      and declare parseObjJSON globally */
-#if 0
+
   sprintf (parseObjJSON,
           "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
           pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", parseObjJSON, NULL);
-#endif
-  printf("%s\n", data);
+
+  printf("%s\n", parseObjJSON);
   entryCount = 0;
   exitCount = 0;
   start = end;
-  alarm(5);
+  alarm(20);
 }
 
 /*
@@ -113,7 +112,7 @@ void alarmHandler(int sig)
  */
 
 /* TODO: remove concatData and concat
-   */
+  
 char* concatData(char pid[17], long start, long end, int in, int out){
 	char str [20];
 	sprintf(str, "\"%s\"", pid);
@@ -133,6 +132,7 @@ char* concatData(char pid[17], long start, long end, int in, int out){
 	result = concat(result, " }");
 	return result;
 }
+*/
 
 /*
  * Function: concat
@@ -141,14 +141,14 @@ char* concatData(char pid[17], long start, long end, int in, int out){
  *
  * s1: first string
  * s2: second string
- */
+
 char* concat(char *s1, char *s2){
-    /*!!!UNTESTED CODE!!!*/
+    /*!!!UNTESTED CODE!!!
     char result[strlen(s1)+strlen(s2)+1];
     strcpy(result, s1);
     strcat(result, s2);
     return result;
-}
+}*/
 
 /*
  * Main method
@@ -345,7 +345,7 @@ void eventAnalyzer (int risenBeam){
 	// 		return;
 	// 	}
 	// }
-	//case 2
+	/*case 2
 	if (isTimeGreater(AOldRise, BLatestFall)){
 		if(diffTimeMicro(AOldFall, BLatestFall) -
 		   diffTimeMicro(ALatestRise, BLatestRise) < DELTA_TIME_OUT){
@@ -356,14 +356,17 @@ void eventAnalyzer (int risenBeam){
 			return;
 		}
 	}
+	*/
 	//case 3
 	if(isTimeGreater(ALatestFall, BLatestFall)){
 		//increment Entry/Exit # based on type
 		if (strcmp(type, "ENTRY")){
 			entryCount +=1;
+			printf("ENTRY\n");
 		} else {
 			exitCount +=1;
-		}
+			printf("EXIT\n");
+}
 		resetTime();
 		return;
 	}
