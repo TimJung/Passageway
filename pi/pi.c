@@ -53,7 +53,7 @@ const int DELTA_TIME_OUT = 1000000;
 int entryCount;
 int exitCount;
 ParseClient client;
-/* TODO: use the following global array for writing JSON 
+/* TODO: use the following global array for writing JSON
    string of the Parse object, is 200 bytes big enough? */
 char parseObjJSON[200];
 
@@ -80,7 +80,10 @@ void alarmHandler(int sig)
   while (fscanf(ifp, "%s", pid) != EOF);
 
   //create struct for data. pid, start, end, entryCount, exitCount
-  char* data = concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
+  char* data = sprintf (parseObjJSON,
+          "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
+          pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
+  //concatData(pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", data, NULL);
   /* TODO replace concatData with the following sprintf,
      and declare parseObjJSON globally */
@@ -145,7 +148,6 @@ char* concat(char *s1, char *s2){
     strcpy(result, s1);
     strcat(result, s2);
     return result;
-}
 }
 
 /*
@@ -365,7 +367,9 @@ void eventAnalyzer (int risenBeam){
 		resetTime();
 		return;
 	}
-	printf("No event occurred. Why are we here???");
+	printf("No event occurred. Why are we here???\n");
+	//printf("ALatestFall: %lu\tALatestRise: %lu\tAOldFall: %lu\tAOldRise: %lu\nBLatestFall: %lu\tBLatestFall: %lu\tBLatestRise: %lu\tBOldFall: %lu\tBOldRise: %lu\n",
+    //        ALatestFall.tv, ALatestRise.tv, AOldFall.tv, AOldRise.tv, BLatestFall.tv, BLatestRise.tv, BOldFall.tv, BOldRise.tv)
 }
 
 
