@@ -73,10 +73,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       _dataErr: function(err) {
-        alert ("Error loading Parse data ", err);
+        alert ('Error loading Parse data ', err);
       },
       ready: function() {
-        var dataObj = Parse.Object.extend("data");
+        var dataObj = Parse.Object.extend('data');
         var query = new Parse.Query (dataObj);
         query.find().done(
           this._dataLoaded.bind(this),
