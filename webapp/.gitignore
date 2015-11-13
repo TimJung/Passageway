@@ -1,5 +1,5 @@
 node_modules
 dist
 bower_components
-scripts/parse-keys.js
+app/scripts/parse-keys.js
 .tmp
