@@ -14,7 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="foot-traffic">
   <template>
-    <heat-map></heat-map>
+    <heat-map heat-data="{{heat}}"></heat-map>
     <div class="table-responsive-vertical shadow-z-1">
       <!--<v-grid selection-mode="single">-->
         <table id="data" class="table table-hover table-mc-light-blue">
@@ -56,9 +56,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: 'foot-traffic',
           notify: true
+        },
+        heat: {
+          type:Array,
+          notify:true
         }
       },
       _dataLoaded: function(results) {
+        console.log('Parse data loaded');
+        this.heat = [];
+        /* Use fake geopoints */
+        this.push('heat', {lat:42.966637, lon:-85.887161});
+        this.push('heat', {lat:42.966637, lon:-85.887261});
+        this.push('heat', {lat:42.966637, lon:-85.887361});
         this.sensorData = [];
         for (var k = 0; k < results.length; k++) {
           var sData = results[k];

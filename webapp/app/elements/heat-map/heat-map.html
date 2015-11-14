@@ -20,8 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div>Hello from <span>{{foo}}</span></div>
-    <google-map 
-                on-google-map-ready="_ApiLoaded"
+    <google-map on-google-map-ready="_ApiLoaded"
                 latitude="42.966637" longitude="-85.887161" zoom="17"></google-map>
   </template>
   <script>
@@ -32,22 +31,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'heat-map',
 
       properties: {
+        heatData: { /* this property corresponds to the attribute heat-data */
+          type: Array,
+          observer: "_heatDataChanged"
+        },
         foo: {
           type: String,
           value: 'heat-map',
           notify: true
         }
       },
-      attached:function() {
+      _heatDataChanged: function(newVal, oldVal) {
+        console.log('Heat data changed from ', oldVal, ' to ', newVal);
+        if (this.heatData) {
+          for (var k = 0; k < this.heatData.length; k++) {
+            sensorData.push(new google.maps.LatLng(
+              this.heatData[k].lat, this.heatData[k].lon));
+          }
+        }
       },
       _ApiLoaded:function(e) {
         var elem = this.$$('google-map');
-        var sensorData = [
-          new google.maps.LatLng(42.966637, -85.887161),
-          new google.maps.LatLng(42.966637, -85.887261),
-          new google.maps.LatLng(42.966637, -85.887361),
-        ];
-        var hmap = new google.maps.visualization.HeatmapLayer({data:sensorData});
+        var sensorData = [];
+        if (this.heatData) {
+          for (var k = 0; k < this.heatData.length; k++) {
+            sensorData.push(new google.maps.LatLng(
+              this.heatData[k].lat, this.heatData[k].lon));
+          }
+        }
+        var hmap = new google.maps.visualization.HeatmapLayer();
+        hmap.setData(sensorData);
         hmap.setMap(elem.map);
       }
     });
