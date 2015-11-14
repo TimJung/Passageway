@@ -71,20 +71,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.sensorData = [];
         for (var k = 0; k < results.length; k++) {
           var sData = results[k];
+          var inCount = sData.get('in');
+          var outCount = sData.get('out');
+          if (inCount == 0 && outCount == 0) continue;
+
           var t1 = new Date(sData.get('start') * 1000);
           var t2 = new Date(sData.get('end') * 1000);
           this.push('sensorData',{
-            macaddr: sData.get('pid'),
-            startTime: t1.toLocaleString(),
-            endTime: t2.toLocaleString(),
-            duration: (sData.get('end') - sData.get('start')),
-            entries: sData.get('in'),
-            exits: sData.get('out')
+              macaddr: sData.get('pid'),
+              startTime: t1.toLocaleString(),
+              endTime: t2.toLocaleString(),
+              duration: (sData.get('end') - sData.get('start')),
+              entries: inCount,
+              exits: outCount
           });
-          /* show random points */
+            /* show random points */
           this.push('heat', {
-            lat : refLat + Math.random()/1000.0,
-            lon : refLon + Math.random()/1000.0
+              lat : refLat + Math.random()/1000.0,
+              lon : refLon + Math.random()/1000.0
           });
         }
       },
