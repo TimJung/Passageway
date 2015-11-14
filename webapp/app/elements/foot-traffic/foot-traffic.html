@@ -21,9 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <heat-map heat-data="{{heat}}"></heat-map>
 
-    <google-chart type='line'
-      data='[["Time","Entry","Exit"],
-        ["Nov 10", 3, 1], ["Nov 11", 10, 8], ["Nov 12", 4, 7]]'>
+    <google-chart type='line'>
     </google-chart>
     <div class="table-responsive-vertical shadow-z-1">
       <!--<v-grid selection-mode="single">-->
@@ -79,6 +77,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var refLat = 42.966637;
         var refLon = -85.887161;
         this.sensorData = [];
+        var chartData = [['Time','Entry','Exit']];
+        var theChart = this.$$('google-chart');
         for (var k = 0; k < results.length; k++) {
           var sData = results[k];
           var inCount = sData.get('in');
@@ -95,12 +95,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               entries: inCount,
               exits: outCount
           });
+          chartData.push([k, inCount, outCount]);
             /* show random points */
           this.push('heat', {
               lat : refLat + Math.random()/1000.0,
               lon : refLon + Math.random()/1000.0
           });
         }
+        /*------*/
+        theChart.data = chartData;
       },
       _dataErr: function(err) {
         alert ('Error loading Parse data ', err);
