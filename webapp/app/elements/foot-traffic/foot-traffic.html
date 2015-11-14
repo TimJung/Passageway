@@ -103,20 +103,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var t1 = new Date(sData.get('start') * 1000);
           var t2 = new Date(sData.get('end') * 1000);
+          var t1str, t2str;
+          /* if the range is less than a day, use time as the x-label,
+             otherwise use date as x-label */
+          if (range < 24*60*60) {
+            t1str = t1.toTimeString().substr(0,8);
+            t2str = t2.toTimeString().substr(0,8);
+          }
+          else {
+            t1str = t1.toDateString().substr(0,8);
+            t2str = t2.toDateString().substr(0,8);
+          }
           this.push('sensorData',{
               macaddr: sData.get('pid'),
-              startTime: t1.toLocaleString(),
-              endTime: t2.toLocaleString(),
+              startTime: t1str,
+              endTime: t2str,
               duration: (sData.get('end') - sData.get('start')),
               entries: inCount,
               exits: outCount
           });
-          /* if the range is less than a day, use time as the x-label,
-             otherwise use date as x-label */
-          if (range < 24*60*60)
-            chartData.push([t1.toTimeString().substr(0,8), inCount, outCount]);
-          else
-            chartData.push([t1.toDateString().substr(0,8), inCount, outCount]);
+          chartData.push([t1str, inCount, outCount]);
             /* show random points */
           this.push('heat', {
               lat : refLat + Math.random()/1000.0,
@@ -130,8 +136,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         alert ('Error loading Parse data ', err);
       },
       ready: function() {
-        var dataObj = Parse.Object.extend('data');
-        var query = new Parse.Query (dataObj);
+        // var dataObj = Parse.Object.extend('data');
+        var query = new Parse.Query ('data');
 
         /* Use Java promises */
         query.find().then(
