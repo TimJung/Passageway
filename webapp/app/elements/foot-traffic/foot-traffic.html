@@ -18,6 +18,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       heat-map {
         padding: 8px;
       }
+      google-chart {
+        padding: 8px;
+        width:600px;
+      }
     </style>
     <heat-map heat-data="{{heat}}"></heat-map>
 
@@ -79,6 +83,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.sensorData = [];
         var chartData = [['Time','Entry','Exit']];
         var theChart = this.$$('google-chart');
+
+        /* Determine the time range of the data */
+        var minTime = Number.MAX_VALUE;
+        var maxTime = Number.MIN_VALUE;
+        for (var k = 0; k < results.length; k++) {
+          var t1 = results[k].get('start');
+          var t2 = results[k].get('end');
+          if (minTime > t1) minTime = t1;
+          if (maxTime < t2) maxTime = t2;
+        }
+        var range = maxTime - minTime;
+
         for (var k = 0; k < results.length; k++) {
           var sData = results[k];
           var inCount = sData.get('in');
@@ -95,14 +111,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               entries: inCount,
               exits: outCount
           });
-          chartData.push([k, inCount, outCount]);
+          /* if the range is less than a day, use time as the x-label,
+             otherwise use date as x-label */
+          if (range < 24*60*60)
+            chartData.push([t1.toTimeString().substr(0,8), inCount, outCount]);
+          else
+            chartData.push([t1.toDateString().substr(0,8), inCount, outCount]);
             /* show random points */
           this.push('heat', {
               lat : refLat + Math.random()/1000.0,
               lon : refLon + Math.random()/1000.0
           });
         }
-        /*------*/
+        /*--- end of for-loop ---*/
         theChart.data = chartData;
       },
       _dataErr: function(err) {
@@ -111,7 +132,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready: function() {
         var dataObj = Parse.Object.extend('data');
         var query = new Parse.Query (dataObj);
-        query.find().done(
+
+        /* Use Java promises */
+        query.find().then(
           this._dataLoaded.bind(this),
           this._dataErr.bind(this)
         );
