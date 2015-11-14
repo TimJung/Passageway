@@ -14,7 +14,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="foot-traffic">
   <template>
+    <style>
+      heat-map {
+        padding: 8px;
+      }
+    </style>
     <heat-map heat-data="{{heat}}"></heat-map>
+
+    <google-chart type='line'
+      data='[["Time","Entry","Exit"],
+        ["Nov 10", 3, 1], ["Nov 11", 10, 8], ["Nov 12", 4, 7]]'>
+    </google-chart>
     <div class="table-responsive-vertical shadow-z-1">
       <!--<v-grid selection-mode="single">-->
         <table id="data" class="table table-hover table-mc-light-blue">
