@@ -15,10 +15,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Passageway" />
+  <meta name="generator" content="Passageway"/>
   <title>Passageway</title>
   <!-- Place favicon.ico in the `app/` directory -->
-  <link rel="shortcut icon" href="favicon.ico"  type="image/ico"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/ico"/>
   <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#2E3AA1">
 
@@ -62,173 +62,220 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 
 <body unresolved class="fullbleed layout vertical">
-  <span id="browser-sync-binding"></span>
-  <template is="dom-bind" id="app">
+<span id="browser-sync-binding"></span>
+<template is="dom-bind" id="app">
 
-    <paper-drawer-panel id="paperDrawerPanel">
-      <!-- Drawer Scroll Header Panel -->
-      <paper-scroll-header-panel drawer fixed>
+  <paper-drawer-panel id="paperDrawerPanel">
+    <!-- Drawer Scroll Header Panel -->
+    <paper-scroll-header-panel drawer fixed>
 
-        <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
-          <span class="paper-font-title">Menu</span>
-        </paper-toolbar>
+      <!-- Drawer Toolbar -->
+      <paper-toolbar id="drawerToolbar">
+        <span class="paper-font-title">Menu</span>
+      </paper-toolbar>
 
-        <!-- Drawer Content -->
-        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="table" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="view-list"></iron-icon>
-            <span>Table</span>
-          </a>
+      <!-- Drawer Content -->
 
-          <a data-route="filter" href="/filter" on-click="onDataRouteClick">
-            <iron-icon icon="filter-list"></iron-icon>
-            <span>Filter Test</span>
-          </a>
+      <paper-menu attr-for-selected="data-route" selected="[[route]]">
+        <a data-route="table" href="/" on-click="onDataRouteClick">
+          <iron-icon icon="view-list"></iron-icon>
+          <span>Table</span>
+        </a>
+        <!--
+                  <a data-route="filter" href="/filter" on-click="onDataRouteClick">
+                    <iron-icon icon="filter-list"></iron-icon>
+                    <span>Filter Test</span>
+                  </a>
 
-          <a data-route="users" href="/users" on-click="onDataRouteClick">
-            <iron-icon icon="info"></iron-icon>
-            <span>Users</span>
-          </a>
+                  <a data-route="users" href="/users" on-click="onDataRouteClick">
+                    <iron-icon icon="info"></iron-icon>
+                    <span>Users</span>
+                  </a>
 
-          <a data-route="contact" href="/contact" on-click="onDataRouteClick">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Contact</span>
-          </a>
+                  <a data-route="contact" href="/contact" on-click="onDataRouteClick">
+                    <iron-icon icon="mail"></iron-icon>
+                    <span>Contact</span>
+                  </a>
 
-          <a data-route="blocks" href="/blocks" on-click="onDataRouteClick">
-            <iron-icon icon="extension"></iron-icon>
-            <span>Building Blocks</span>
-          </a>
+                  <a data-route="blocks" href="/blocks" on-click="onDataRouteClick">
+                    <iron-icon icon="extension"></iron-icon>
+                    <span>Building Blocks</span>
+                  </a>
 
-          <a data-route="license" href="/license" on-click="onDataRouteClick">
-            <iron-icon icon="view-headline"></iron-icon>
-            <span>License</span>
-          </a>
-        </paper-menu>
-      </paper-scroll-header-panel>
+                  <a data-route="license" href="/license" on-click="onDataRouteClick">
+                    <iron-icon icon="view-headline"></iron-icon>
+                    <span>License</span>
+                  </a>
+                   -->
+        <paper-submenu>
+          <paper-item class="menu-trigger">Makinac</paper-item>
+          <paper-menu class="menu-content sublist">
+            <paper-item>
+              <a data-route="MakinacA1" href="/MakinacA1" on-click="onDataRouteClick">
+                <iron-icon icon="view-headline"></iron-icon>
+                <span>Makinac A-1</span>
+              </a>
+            </paper-item>
 
-      <!-- Main Area -->
-      <paper-scroll-header-panel main condenses keep-condensed-header>
+            <paper-item>
+              <a data-route="MakinacC2" href="/MakinacC2" on-click="onDataRouteClick">
+                <iron-icon icon="view-headline"></iron-icon>
+                <span>Makinac C-2</span>
+              </a>
+            </paper-item>
+          </paper-menu>
+        </paper-submenu>
 
-        <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="tall">
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex"></span>
+      </paper-menu>
+    </paper-scroll-header-panel>
 
-          <!-- Toolbar icons -->
-          <!--<paper-icon-button icon="refresh"></paper-icon-button>-->
-          <!--<paper-icon-button icon="search"></paper-icon-button>-->
+    <!-- Main Area -->
+    <paper-scroll-header-panel main condenses keep-condensed-header>
 
-          <!-- Application name -->
-          <div class="middle middle-container center horizontal layout">
-            <div class="app-name">Passageway</div>
-          </div>
+      <!-- Main Toolbar -->
+      <paper-toolbar id="mainToolbar" class="tall">
+        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+        <span class="flex"></span>
 
-          <!-- Application sub title -->
-          <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title app-subhead">{{route}}</div>
-          </div>
+        <!-- Toolbar icons -->
+        <!--<paper-icon-button icon="refresh"></paper-icon-button>-->
+        <!--<paper-icon-button icon="search"></paper-icon-button>-->
 
-        </paper-toolbar>
-
-        <!-- Main Content -->
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-            <section data-route="table">
-              <foot-traffic></foot-traffic>
-            </section>
-
-            <section data-route="filter">
-              <filter-view></filter-view>
-            </section>
-
-            <section data-route="users">
-              <paper-material elevation="1">
-                <h2 class="page-title">Users</h2>
-                <p>This is the users section</p>
-                <a href="/users/Rob">Rob</a>
-              </paper-material>
-            </section>
-
-            <section data-route="user-info">
-              <paper-material elevation="1">
-                <h2 class="page-title">
-                User:<span>{{params.name}}</span>
-                </h2>
-                <div>This is <span>{{params.name}}</span>'s section</div>
-              </paper-material>
-            </section>
-
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
-            </section>
-
-            <section data-route="blocks">
-              <paper-material elevation="1">
-                <h2 class="page-title">Building Blocks</h2>
-                <p>Third party libraries/tools used for building this app</p>
-                <ul>
-                  <li><a href="http://polymer-project.org">Polymer</a>
-                  <li><a href="https://github.com/yeoman/generator-polymer">Polymer Yeoman Generator</a></li>
-                  <li><a href="https://github.com/PolymerElements/polymer-starter-kit">Polymer Starter Kit</a></li>
-                  <li><a href="https://parse.com/products/javascript">Javascript Parse SDK</a>
-                </ul>
-              </paper-material>
-            </section>
-
-            <section data-route="license">
-              <paper-material elevation="1" class="paper-font-body2">
-                <h1 id="license">License</h1>
-                <p>Everything in this repo is BSD style license unless otherwise specified.</p>
-                <p>Copyright (c) 2015 The Polymer Authors. All rights reserved.</p>
-                <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-                <ul>
-                  <li>Redistributions of source code must retain the above copyright
-                    notice, this list of conditions and the following disclaimer.</li>
-                    <li>Redistributions in binary form must reproduce the above
-                      copyright notice, this list of conditions and the following disclaimer
-                      in the documentation and/or other materials provided with the
-                      distribution.</li>
-                      <li>Neither the name of Google Inc. nor the names of its
-                        contributors may be used to endorse or promote products derived from
-                        this software without specific prior written permission.</li>
-                      </ul>
-                      <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-                    </paper-material>
-                  </section>
-          </iron-pages>
+        <!-- Application name -->
+        <div class="middle middle-container center horizontal layout">
+          <div class="app-name">Passageway</div>
         </div>
-      </paper-scroll-header-panel>
-    </paper-drawer-panel>
 
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
+        <!-- Application sub title -->
+        <div class="bottom bottom-container center horizontal layout">
+          <div class="bottom-title app-subhead">{{route}}</div>
+        </div>
 
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="fastest"
-                         cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
-    -->
+      </paper-toolbar>
 
-  </template>
+      <!-- Main Content -->
+      <div class="content">
+        <filter-view></filter-view>
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/parse-keys.js"></script>
-  <script src="scripts/app.js"></script>
-  <!-- endbuild-->
+        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+          <section data-route="table">
+            <foot-traffic></foot-traffic>
+          </section>
+
+          <section data-route="filter">
+            <filter-view></filter-view>
+          </section>
+
+          <section data-route="users">
+            <h2 class="page-title">Users</h2>
+
+            <p>This is the users section</p>
+            <a href="/users/Rob">Rob</a>
+            </paper-material>
+          </section>
+
+          <section data-route="user-info">
+            <paper-material elevation="1">
+              <h2 class="page-title">
+                User:<span>{{params.name}}</span>
+              </h2>
+
+              <div>This is <span>{{params.name}}</span>'s section</div>
+            </paper-material>
+          </section>
+
+          <section data-route="MakinacA1">
+            <location-element location="Makinac A-1"></location-element>
+          </section>
+
+          <section data-route="MakinacC2">
+            <location-element location="Makinac C-2"></location-element>
+          </section>
+
+          <section data-route="contact">
+            <paper-material elevation="1">
+              <h2 class="page-title">Contact</h2>
+
+              <p>This is the contact section</p>
+            </paper-material>
+          </section>
+
+          <section data-route="blocks">
+            <paper-material elevation="1">
+              <h2 class="page-title">Building Blocks</h2>
+
+              <p>Third party libraries/tools used for building this app</p>
+              <ul>
+                <li><a href="http://polymer-project.org">Polymer</a>
+                <li><a href="https://github.com/yeoman/generator-polymer">Polymer Yeoman Generator</a></li>
+                <li><a href="https://github.com/PolymerElements/polymer-starter-kit">Polymer Starter Kit</a></li>
+                <li><a href="https://parse.com/products/javascript">Javascript Parse SDK</a>
+              </ul>
+            </paper-material>
+          </section>
+
+          <section data-route="license">
+            <paper-material elevation="1" class="paper-font-body2">
+              <h1 id="license">License</h1>
+
+              <p>Everything in this repo is BSD style license unless otherwise specified.</p>
+
+              <p>Copyright (c) 2015 The Polymer Authors. All rights reserved.</p>
+
+              <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided
+                that the following conditions are met:</p>
+              <ul>
+                <li>Redistributions of source code must retain the above copyright
+                  notice, this list of conditions and the following disclaimer.
+                </li>
+                <li>Redistributions in binary form must reproduce the above
+                  copyright notice, this list of conditions and the following disclaimer
+                  in the documentation and/or other materials provided with the
+                  distribution.
+                </li>
+                <li>Neither the name of Google Inc. nor the names of its
+                  contributors may be used to endorse or promote products derived from
+                  this software without specific prior written permission.
+                </li>
+              </ul>
+              <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS
+                OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+                FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+                BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+                BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+                BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+                LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+                SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+            </paper-material>
+          </section>
+        </iron-pages>
+      </div>
+    </paper-scroll-header-panel>
+  </paper-drawer-panel>
+
+  <!-- Uncomment next block to enable Service Worker support (1/2) -->
+  <!--
+  <paper-toast id="caching-complete"
+               duration="6000"
+               text="Caching complete! This app will work offline.">
+  </paper-toast>
+
+  <platinum-sw-register auto-register
+                        clients-claim
+                        skip-waiting
+                        on-service-worker-installed="displayInstalledToast">
+    <platinum-sw-cache default-cache-strategy="fastest"
+                       cache-config-file="cache-config.json">
+    </platinum-sw-cache>
+  </platinum-sw-register>
+  -->
+
+</template>
+
+<!-- build:js scripts/app.js -->
+<script src="scripts/parse-keys.js"></script>
+<script src="scripts/app.js"></script>
+<!-- endbuild-->
 </body>
 
 </html>
