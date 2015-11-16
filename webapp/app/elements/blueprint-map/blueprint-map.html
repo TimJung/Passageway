@@ -10,29 +10,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="..\..\bower_components/polymer/polymer.html">
 
-<dom-module id="data-element">
+<dom-module id="blueprint-map">
   <template>
     <style>
       :host {
         display: block;
       }
     </style>
-    <paper-material>
-      <google-chart type='line'>
-      </google-chart>
-    </paper-material>
+    <img src="../../images/blueprint/MackinacA1.PNG" width="100%"/>
   </template>
   <script>
   (function() {
     'use strict';
 
     Polymer({
-      is: 'data-element',
+      is: 'blueprint-map',
 
       properties: {
         foo: {
           type: String,
-          value: 'data-element',
+          value: 'blueprint-map',
           notify: true
         }
       }

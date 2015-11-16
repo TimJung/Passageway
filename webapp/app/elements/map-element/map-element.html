@@ -18,10 +18,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <paper-material elevation="1">
-    <div>Hello from <span>{{foo}}</span></div>
+      <paper-tabs id="tabs" selected="{{selected}}" noink>
+        <paper-tab>Google Map</paper-tab>
+        <paper-tab>Blueprint</paper-tab>
+      </paper-tabs>
+      <iron-pages id="pages" selected="{{selected}}">
+        <div><heat-map></heat-map></div>
+        <div><blueprint-map></blueprint-map></div>
+      </iron-pages>
     </paper-material>
   </template>
   <script>
+
   (function() {
     'use strict';
 
@@ -34,6 +42,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: 'map-element',
           notify: true
         }
+      },
+      ready: function() {
+
       }
     });
   })();
