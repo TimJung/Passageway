@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-tab>Blueprint</paper-tab>
       </paper-tabs>
       <iron-pages id="pages" selected="{{selected}}">
-        <div><heat-map></heat-map></div>
+        <div><heat-map heat-data="{{heat}}"></heat-map></div>
         <div><blueprint-map></blueprint-map></div>
       </iron-pages>
     </paper-material>
@@ -41,6 +41,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: 'map-element',
           notify: true
+        },
+        heat: {
+          type:Array,
+          notify:true
         }
       },
       ready: function() {

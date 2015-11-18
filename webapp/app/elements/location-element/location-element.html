@@ -17,8 +17,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
     </style>
-    <div>Hello from <span>{{location}}</span></div>
-    <map-element></map-element>
+    <map-element heat="{{heat}}"></map-element>
+    <!--<heat-map heat-data="{{heat}}"></heat-map>-->
     <data-element></data-element>
   </template>
   <script>
@@ -47,7 +47,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var refLon = -85.887161;
         this.sensorData = [];
         var chartData = [['Time','Entry','Exit']];
-        var theChart = this.$$('google-chart');
+        var dataElement = this.$$('data-element');
+        var theChart = dataElement.$$('google-chart');
 
         /* Determine the time range of the data */
         var minTime = Number.MAX_VALUE;
