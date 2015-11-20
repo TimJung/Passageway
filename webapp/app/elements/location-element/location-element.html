@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="..\..\bower_components/polymer/polymer.html">
 
-<dom-module id="location-element" attributes="location">
+<dom-module id="location-element">
   <template>
     <style>
       :host {
@@ -20,6 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <map-element heat="{{heat}}"></map-element>
     <!--<heat-map heat-data="{{heat}}"></heat-map>-->
     <data-element></data-element>
+    <text>HELLO</text>
   </template>
   <script>
   (function() {
@@ -37,8 +38,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         heat: {
           type:Array,
           notify:true
+        },
+        currentLocation: {
+          type: String,
+          observer: "locationSelected"
         }
       },
+      locationSelected: function(newVal, oldVal){
+
+        var query = new Parse.Query ('data');
+        /* Use Java promises */
+        query.find().then(
+          this._dataLoaded.bind(this),
+          this._dataErr.bind(this)
+        );
+        console.log(newVal);
+      }
+      ,
       _dataLoaded: function(results) {
         console.log('Parse data loaded');
         this.heat = [];

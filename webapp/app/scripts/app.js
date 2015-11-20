@@ -31,6 +31,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
     // imports are loaded and elements have been registered
+    // fire a signal then in parent element handle it and wait do the query there
+    //fireEvent("iron-signal",{name:"page-ready"});
+    //var event = new CustomEvent('iron-signal', {'detail' : {name: 'page-ready'}});
+    //document.dispatchEvent(event);
   });
 
   // Main area's paper-scroll-header-panel custom condensing transformation of
