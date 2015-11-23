@@ -20,7 +20,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <map-element heat="{{heat}}"></map-element>
     <!--<heat-map heat-data="{{heat}}"></heat-map>-->
     <data-element></data-element>
-    <text>HELLO</text>
   </template>
   <script>
   (function() {
@@ -116,17 +115,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _dataErr: function(err) {
         alert ('Error loading Parse data ', err);
-      },
-      ready: function() {
-        // var dataObj = Parse.Object.extend('data');
-        var query = new Parse.Query ('data');
-
-        /* Use Java promises */
-        query.find().then(
-          this._dataLoaded.bind(this),
-          this._dataErr.bind(this)
-        );
       }
+//      ready: function() {
+//        // var dataObj = Parse.Object.extend('data');
+//        var query = new Parse.Query ('data');
+//
+//        /* Use Java promises */
+//        query.find().then(
+//          this._dataLoaded.bind(this),
+//          this._dataErr.bind(this)
+//        );
+//      }
     });
   })();
   </script>

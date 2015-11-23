@@ -38,8 +38,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <!--<iron-icon icon="view-headline"></iron-icon>-->
               <!--<span>Mackinac</span>  -->
             <!--</paper-item>-->
-            <paper-menu class="menu-content sublist" selected="{{buildingIndex}}">
-              <template is="dom-repeat" items="{{buildings}}">
+            <paper-menu class="menu-content sublist" selected="{{buildingIndex}}" data-route="location" href="/">
+              <template  is="dom-repeat" items="{{buildings}}">
                 <paper-item>
                   <iron-icon icon="view-list"></iron-icon>
                   <span>{{item}}</span></paper-item>
@@ -76,7 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Main Content -->
         <div class="content">
 
-          <filter-view></filter-view>
+
 
           <iron-pages attr-for-selected="data-route" selected="{{route}}" style="padding-top: 0px;">
 
@@ -84,24 +84,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <foot-traffic></foot-traffic>
             </section>
 
-
-            <location-element current-location="{{currentLocation}}"></location-element>
-
-            <!--<building-list route="{{route}}" buildings="{{buildings}}"></building-list>-->
-
-
-            <section data-route="blocks">
-              <paper-material elevation="1">
-                <h2 class="page-title">Building Blocks</h2>
-
-                <p>Third party libraries/tools used for building this app</p>
-                <ul>
-                  <li><a href="http://polymer-project.org">Polymer</a>
-                  <li><a href="https://github.com/yeoman/generator-polymer">Polymer Yeoman Generator</a></li>
-                  <li><a href="https://github.com/PolymerElements/polymer-starter-kit">Polymer Starter Kit</a></li>
-                  <li><a href="https://parse.com/products/javascript">Javascript Parse SDK</a>
-                </ul>
-              </paper-material>
+            <section data-route = "location">
+              <filter-view></filter-view>
+              <location-element current-location="[[currentLocation]]"></location-element>
             </section>
 
             <section data-route="license">
