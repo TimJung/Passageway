@@ -44,7 +44,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       locationSelected: function(newVal, oldVal){
-
         var query = new Parse.Query ('data');
         /* Use Java promises */
         query.find().then(
@@ -56,7 +55,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ,
       _dataLoaded: function(results) {
         console.log('Parse data loaded');
-        this.heat = [];
+        //this.heat = [];
+        var heatArray = [];
         /* Use fake geopoints */
         var refLat = 42.966637;
         var refLon = -85.887161;
@@ -105,11 +105,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
           chartData.push([t1str, inCount, outCount]);
           /* show random points */
-          this.push('heat', {
+          heatArray.push({
             lat : refLat + Math.random()/1000.0,
             lon : refLon + Math.random()/1000.0
           });
         }
+        //this.heat = [];
+        this.heat = heatArray;
+        //this.push('heat', heatArray);
         /*--- end of for-loop ---*/
         theChart.data = chartData;
       },

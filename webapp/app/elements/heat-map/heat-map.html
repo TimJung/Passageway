@@ -38,29 +38,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: 'heat-map',
           notify: true
-        }
+        },
+        sensorData: Array,
+        hMap: Object
       },
       _heatDataChanged: function(newVal, oldVal) {
         console.log('Heat data changed from ', oldVal, ' to ', newVal);
-        if (this.heatData) {
-          for (var k = 0; k < this.heatData.length; k++) {
-            sensorData.push(new google.maps.LatLng(
-              this.heatData[k].lat, this.heatData[k].lon));
-          }
+        var elem = this.$$('google-map');
+        this.sensorData = [];
+        for (var k = 0; k < this.heatData.length; k++) {
+          this.push("sensorData", new google.maps.LatLng(
+            this.heatData[k].lat, this.heatData[k].lon));
         }
+        this.hmap.setData(this.sensorData);
+        this.hmap.setMap(elem.map);
       },
       _ApiLoaded:function(e) {
         var elem = this.$$('google-map');
-        var sensorData = [];
+        this.sensorData = [];
         if (this.heatData) {
           for (var k = 0; k < this.heatData.length; k++) {
-            sensorData.push(new google.maps.LatLng(
+            this.push("sensorData", new google.maps.LatLng(
               this.heatData[k].lat, this.heatData[k].lon));
           }
         }
-        var hmap = new google.maps.visualization.HeatmapLayer();
-        hmap.setData(sensorData);
-        hmap.setMap(elem.map);
+        this.hmap = new google.maps.visualization.HeatmapLayer();
+        this.hmap.setData(this.sensorData);
+        this.hmap.setMap(elem.map);
       }
     });
   })();
