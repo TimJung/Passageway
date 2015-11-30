@@ -14,19 +14,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="foot-traffic">
   <template>
-    <style>
-      heat-map {
-        padding: 8px;
-      }
-      google-chart {
-        padding: 8px;
-        width:600px;
-      }
-    </style>
-    <heat-map heat-data="{{heat}}"></heat-map>
-
-    <google-chart type='line'>
-    </google-chart>
     <div class="table-responsive-vertical shadow-z-1">
       <!--<v-grid selection-mode="single">-->
         <table id="data" class="table table-hover table-mc-light-blue">
@@ -99,20 +86,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var sData = results[k];
           var inCount = sData.get('in');
           var outCount = sData.get('out');
-          //if (inCount == 0 && outCount == 0) continue;
+          if (inCount == 0 && outCount == 0) continue;
 
           var t1 = new Date(sData.get('start') * 1000);
           var t2 = new Date(sData.get('end') * 1000);
           var t1str, t2str;
           /* if the range is less than a day, use time as the x-label,
              otherwise use date as x-label */
-          //if (range < 24*60*60) {
+//          if (range < 24*60*60) {
 //            t1str = t1.toTimeString().substr(0,8);
 //            t2str = t2.toTimeString().substr(0,8);
-          t1str = t1.toString();
-          t2str = t2.toString();
-          //}
-//          else {
+          t1str = t1.toString().substr(0,25);
+          t2str = t2.toString().substr(0,25);
+//          }else {
 //            t1str = t1.toDateString().substr(0,8);
 //            t2str = t2.toDateString().substr(0,8);
 //          }
@@ -124,15 +110,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               entries: inCount,
               exits: outCount
           });
-          chartData.push([t1str, inCount, outCount]);
+          //chartData.push([t1str, inCount, outCount]);
             /* show random points */
-          this.push('heat', {
-              lat : refLat + Math.random()/1000.0,
-              lon : refLon + Math.random()/1000.0
-          });
+//          this.push('heat', {
+//              lat : refLat + Math.random()/1000.0,
+//              lon : refLon + Math.random()/1000.0
+//          });
         }
         /*--- end of for-loop ---*/
-        theChart.data = chartData;
+        //theChart.data = chartData;
       },
       _dataErr: function(err) {
         alert ('Error loading Parse data ', err);

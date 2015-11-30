@@ -16,15 +16,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: block;
       }
+      paper-tabs.blue::shadow #selectionBar {
+        background-color: #4285F4;
+      }
     </style>
     <paper-material elevation="1">
-      <paper-tabs id="tabs" selected="{{selected}}" noink>
+      <paper-tabs class="blue" id="tabs" selected="{{selected}}" noink>
         <paper-tab>Google Map</paper-tab>
         <paper-tab>Blueprint</paper-tab>
       </paper-tabs>
       <iron-pages id="pages" selected="{{selected}}">
         <heat-map heat-data="{{heat}}"></heat-map>
-        <blueprint-map></blueprint-map>
+        <blueprint-map location="{{location}}"></blueprint-map>
       </iron-pages>
     </paper-material>
   </template>
@@ -45,7 +48,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         heat: {
           type:Array,
           notify:true
-        }
+        },
+        location: String
       }
     });
   })();

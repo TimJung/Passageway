@@ -68,7 +68,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Application sub title -->
           <div class="bottom bottom-container center horizontal layout">
-            <div class="bottom-title app-subhead">{{route}}</div>
+            <div class="bottom-title app-subhead">{{currentLocation}}</div>
           </div>
 
         </paper-toolbar>
@@ -166,9 +166,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Number,
           observer: "indexChange"
         },
-        buildings: Array
+        buildings: Array,
+
       },
-      indexChange: function(newVal, oldVal){
+      indexChange: function(newVal, oldVal) {
         this.currentLocation = this.buildings[newVal];
       },
       ready: function(){
@@ -193,6 +194,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       onDataRouteClick: function() {
         var drawerPanel = document.querySelector('#paperDrawerPanel');
+        this.currentLocation = 'Table';
         if (drawerPanel.narrow) {
           drawerPanel.closeDrawer();
         }
