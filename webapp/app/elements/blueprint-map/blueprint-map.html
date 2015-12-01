@@ -42,28 +42,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           observer: "locationSelected"
         }
-      },
-
-      locationSelected: function(newVal, oldVal){
-        var query = new Parse.Query ('Blueprints');
-        query.matches("Description", this.location);
-        /* Use Java promises */
-        query.find().then(
-          this._dataLoaded.bind(this),
-          this._dataErr.bind(this)
-        );
-        console.log(newVal);
-      },
-      _dataLoaded:function(results){
-        //load the image into our view
-        var imageHolder = document.getElementById('blueprint');
-        var theImage = results[0].get('image');
-        var test = theImage.url();
-        imageHolder.setAttribute('src', theImage.url());
-      },
-      _dataErr: function(err) {
-      alert ('Error loading Parse data ', err);
-    }
+      }
     });
   })();
   </script>

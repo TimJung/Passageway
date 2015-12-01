@@ -16,42 +16,111 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: block;
       }
-      paper-tabs.blue::shadow #selectionBar {
-        background-color: #4285F4;
+      google-map {
+        height:400px;
       }
+      /*paper-tabs.blue::shadow #selectionBar {*/
+        /*background-color: #4285F4;*/
+      /*}*/
     </style>
-    <paper-material elevation="1">
-      <paper-tabs class="blue" id="tabs" selected="{{selected}}" noink>
-        <paper-tab>Google Map</paper-tab>
-        <paper-tab>Blueprint</paper-tab>
-      </paper-tabs>
-      <iron-pages id="pages" selected="{{selected}}">
-        <heat-map heat-data="{{heat}}"></heat-map>
-        <blueprint-map location="{{location}}"></blueprint-map>
-      </iron-pages>
+    <!--<paper-material elevation="1">-->
+      <!--<paper-tabs class="blue" id="tabs" selected="{{selected}}" noink>-->
+        <!--<paper-tab>Google Map</paper-tab>-->
+        <!--<paper-tab>Blueprint</paper-tab>-->
+      <!--</paper-tabs>-->
+      <!--<iron-pages id="pages" selected="{{selected}}">-->
+        <!--<heat-map heat-data="{{heat}}"></heat-map>-->
+        <!--<blueprint-map location="{{location}}"></blueprint-map>-->
+      <!--</iron-pages>-->
+    <!--</paper-material>-->
+    <paper-material>
+       <google-map on-google-map-ready="_ApiLoaded"
+                latitude="42.966637" longitude="-85.887161" zoom="17"></google-map>
     </paper-material>
   </template>
   <script>
+    (function() {
+      'use strict';
 
-  (function() {
-    'use strict';
+      Polymer({
+        is: 'map-element',
 
-    Polymer({
-      is: 'map-element',
-
-      properties: {
-        foo: {
-          type: String,
-          value: 'map-element',
-          notify: true
+        properties: {
+          heatData: {
+            /* this property corresponds to the attribute heat-data */
+            type: Array,
+            observer: "_heatDataChanged"
+          },
+          foo: {
+            type: String,
+            value: 'heat-map',
+            notify: true
+          },
+          location: {
+            type: String,
+            observer: "locationSelected"
+          },
+          sensorData: Array,
+          overlay: Object,
+          hmap: Object
         },
-        heat: {
-          type:Array,
-          notify:true
+        _heatDataChanged: function (newVal, oldVal) {
+          console.log('Heat data changed from ', oldVal, ' to ', newVal);
+          var elem = this.$$('google-map');
+          this.sensorData = [];
+          for (var k = 0; k < this.heatData.length; k++) {
+            this.push("sensorData", new google.maps.LatLng(
+              this.heatData[k].lat, this.heatData[k].lon));
+          }
+          this.hmap.setData(this.sensorData);
+          this.hmap.setMap(elem.map);
         },
-        location: String
-      }
-    });
-  })();
+        _ApiLoaded: function (e) {
+          var elem = this.$$('google-map');
+          this.sensorData = [];
+          if (this.heatData) {
+            for (var k = 0; k < this.heatData.length; k++) {
+              this.push("sensorData", new google.maps.LatLng(
+                this.heatData[k].lat, this.heatData[k].lon));
+            }
+          }
+          this.hmap = new google.maps.visualization.HeatmapLayer();
+          this.hmap.setData(this.sensorData);
+          this.hmap.setMap(elem.map);
+        },
+        locationSelected: function(newVal, oldVal){
+          var query = new Parse.Query ('Blueprints');
+          query.matches("Description", this.location);
+          /* Use Java promises */
+          query.find().then(
+            this._overlayLoaded.bind(this),
+            this._overlayErr.bind(this)
+          );
+          console.log(newVal);
+        },
+        _overlayLoaded:function(results) {
+          var elem = this.$$('google-map');
+          //load the image into our view
+          var imageHolder = document.getElementById('blueprint');
+          var theImage = results[0].get('image');
+          var test = theImage.url();
+          //imageHolder.setAttribute('src', theImage.url());
+
+          var imageBounds = {
+            north: 40.773941,
+            south: 40.712216,
+            east: -74.12544,
+            west: -74.22655
+          };
+
+          this.overlay = new google.maps.GroundOverlay(
+            theImage.url(), imageBounds);
+          this.overlay.setMap(elem.map);
+        },
+        _overlayErr: function(err) {
+          alert ('Error loading Parse data ', err);
+        }
+      })
+    })();
   </script>
 </dom-module>
