@@ -49,7 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        <google-map on-google-map-ready="_ApiLoaded"
                 latitude="42.966637" longitude="-85.887161" zoom="17" no-auto-tilt></google-map>
       <paper-material class="toggle">
-        <paper-toggle-button checked onClick="{{toggleOverlay}}"><span style="font-size: small;">Blueprint</span></paper-toggle-button>
+        <paper-toggle-button checked on-change="toggleOverlay"><span style="font-size: small;">Blueprint</span></paper-toggle-button>
       </paper-material>
 
     </paper-material>
@@ -116,6 +116,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         _overlayLoaded:function(results) {
           var elem = this.$$('google-map');
+          if(this.overlay) this.overlay.setMap(null);
           //load the image into our view
           var imageHolder = document.getElementById('blueprint');
           var theImage = results[0].get('image');
@@ -131,16 +132,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.overlay = new google.maps.GroundOverlay(
             theImage.url(), imageBounds);
-          this.overlay.setMap(elem.map);
+          if(this.$$('paper-toggle-button').checked)
+            this.overlay.setMap(elem.map);
         },
         _overlayErr: function(err) {
           alert ('Error loading Parse data ', err);
         },
         toggleOverlay: function() {
-          if (overlay.visibility == true){
-            overlay.setMap(null);
+          if (!this.$$('paper-toggle-button').checked){
+            this.overlay.setMap(null);
           } else {
-            overlay.setMap(elem.map);
+            this.overlay.setMap(this.$$('google-map').map);
           }
         }
       })
