@@ -19,9 +19,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       google-map {
         height:400px;
       }
-      /*paper-tabs.blue::shadow #selectionBar {*/
-        /*background-color: #4285F4;*/
-      /*}*/
+      paper-toggle-button {
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+      paper-material .toggle {
+        position: absolute;
+        right: 10px;
+        padding: 0px;
+        top: 10px;
+        width: auto;
+        height: auto;
+
+      }
     </style>
     <!--<paper-material elevation="1">-->
       <!--<paper-tabs class="blue" id="tabs" selected="{{selected}}" noink>-->
@@ -35,7 +47,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!--</paper-material>-->
     <paper-material>
        <google-map on-google-map-ready="_ApiLoaded"
-                latitude="42.966637" longitude="-85.887161" zoom="17"></google-map>
+                latitude="42.966637" longitude="-85.887161" zoom="17" no-auto-tilt></google-map>
+      <paper-material class="toggle">
+        <paper-toggle-button checked onClick="{{toggleOverlay}}"><span style="font-size: small;">Blueprint</span></paper-toggle-button>
+      </paper-material>
+
     </paper-material>
   </template>
   <script>
@@ -107,10 +123,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //imageHolder.setAttribute('src', theImage.url());
 
           var imageBounds = {
-            north: 40.773941,
-            south: 40.712216,
-            east: -74.12544,
-            west: -74.22655
+            north: 42.967422,
+            south: 42.965963,
+            east: -85.886085,
+            west: -85.887585
           };
 
           this.overlay = new google.maps.GroundOverlay(
@@ -119,6 +135,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         _overlayErr: function(err) {
           alert ('Error loading Parse data ', err);
+        },
+        toggleOverlay: function() {
+          if (overlay.visibility == true){
+            overlay.setMap(null);
+          } else {
+            overlay.setMap(elem.map);
+          }
         }
       })
     })();
