@@ -19,6 +19,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           color: #3262ba;
           padding-bottom: 8px;
       }
+      paper-fab.applyFilter{
+        position: absolute;
+        right: 10px;
+        bottom: -10px;
+      }
     </style>
     <paper-material elevation="1"  style="padding: 16px">
       <div class="header">FILTERS</div>
@@ -50,6 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-dropdown-menu>
       <!--<paper-toggle-button>toggle</paper-toggle-button>-->
       <!--<paper-checkbox>Check</paper-checkbox>-->
+      <paper-fab class="applyFilter" icon="check"></paper-fab>
     </paper-material>
   </template>
   <script>
