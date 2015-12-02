@@ -1,0 +1,67 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="..\..\bower_components/polymer/polymer.html">
+
+<dom-module id="about-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      p{
+        padding: 8px;
+      }
+      img.center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      paper-button.black {
+        margin-left: 8px;
+        background: #171515;
+        color: white;
+      }
+    </style>
+    <paper-material>
+      <p>Welcome to Passageway, a project developed by four Computer Science
+        students at Grand Valley State University. The goal of the project is
+        to provide businesses or individuals with a simple way to monitor and
+        visualize foot-traffic data on their property.</p>
+    </paper-material>
+
+    <paper-material>
+      <img class="center" src="//assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" width="100px"/>
+      <p>Passageway is completely open-source! Check out our GitHub repository to learn more about how
+        to get the ball rolling and integrate Passageway into your own project.
+        We made our instructions as easy to follow as possible and we are
+        continuing to refine the documentation.</p>
+      <paper-button class="black" onclick="window.open('//github.com/TimJung/Passageway','_blank');">View Repository</paper-button>
+      <paper-button class="black" onclick="window.open('github-windows://openRepo/https://github.com/TimJung/Passageway','_blank');">Clone to Desktop</paper-button>
+    </paper-material>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'about-element',
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'about-element',
+          notify: true
+        }
+      }
+    });
+  })();
+  </script>
+</dom-module>
