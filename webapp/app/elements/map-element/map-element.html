@@ -17,7 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
       google-map {
-        height:400px;
+        height:500px;
       }
       paper-toggle-button {
         padding-left: 8px;
@@ -35,23 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
     </style>
-    <!--<paper-material elevation="1">-->
-      <!--<paper-tabs class="blue" id="tabs" selected="{{selected}}" noink>-->
-        <!--<paper-tab>Google Map</paper-tab>-->
-        <!--<paper-tab>Blueprint</paper-tab>-->
-      <!--</paper-tabs>-->
-      <!--<iron-pages id="pages" selected="{{selected}}">-->
-        <!--<heat-map heat-data="{{heat}}"></heat-map>-->
-        <!--<blueprint-map location="{{location}}"></blueprint-map>-->
-      <!--</iron-pages>-->
-    <!--</paper-material>-->
     <paper-material>
        <google-map on-google-map-ready="_ApiLoaded"
-                latitude="42.966637" longitude="-85.887161" zoom="17" no-auto-tilt></google-map>
+                latitude="{{latitude}}" longitude="{{longitude}}" zoom="20" no-auto-tilt></google-map>
       <paper-material class="toggle">
         <paper-toggle-button checked on-change="toggleOverlay"><span style="font-size: small;">Blueprint</span></paper-toggle-button>
       </paper-material>
-
     </paper-material>
   </template>
   <script>
@@ -78,7 +67,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           sensorData: Array,
           overlay: Object,
-          hmap: Object
+          hmap: Object,
+          latitude: Object,
+          longitude: Object
         },
         _heatDataChanged: function (newVal, oldVal) {
           console.log('Heat data changed from ', oldVal, ' to ', newVal);
@@ -116,13 +107,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         _overlayLoaded:function(results) {
           var elem = this.$$('google-map');
-          if(this.overlay) this.overlay.setMap(null);
-          //load the image into our view
-          var imageHolder = document.getElementById('blueprint');
-          var theImage = results[0].get('image');
-          var test = theImage.url();
-          //imageHolder.setAttribute('src', theImage.url());
 
+          //reset the overlay
+          if(this.overlay) this.overlay.setMap(null);
+
+          //blueprint image
+          var theImage = results[0].get('image');
+
+          //coordinate to zoom to
+          var midPoint = results[0].get('midPoint');
+          this.latitude = midPoint.latitude;
+          this.longitude = midPoint.longitude;
+
+
+          //TODO get this from parse
           var imageBounds = {
             north: 42.967422,
             south: 42.965963,
@@ -130,13 +128,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             west: -85.887585
           };
 
+          //display the overlay image
           this.overlay = new google.maps.GroundOverlay(
             theImage.url(), imageBounds);
           if(this.$$('paper-toggle-button').checked)
             this.overlay.setMap(elem.map);
         },
         _overlayErr: function(err) {
-          alert ('Error loading Parse data ', err);
+          alert ('Error loading overlay', err);
         },
         toggleOverlay: function() {
           if (!this.$$('paper-toggle-button').checked){
