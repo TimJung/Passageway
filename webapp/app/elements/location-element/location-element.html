@@ -45,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           piList: { //pi list of all the pis in the system to use a hash map for their coordinates
             type: Map
           },
-          locationPiList: { //pi list of all the pis in that specific location
+          locationPiList: { //pi list of all the pis in that specific location for querying whats in that location
             type: Array
           }
         },
@@ -62,11 +62,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _locationLoaded: function (results) {
 
           //retrieve the list of pis for that building and floor
-          var locationPiList = results[0].get('piList');
+          this.locationPiList = results[0].get('piList');
 
           //query the data table for all rows with those pi ids
           var query = new Parse.Query('data');
-          query.containedIn('pid', locationPiList);
+          query.containedIn('pid', this.locationPiList);
           query.find().then(
             this._dataLoaded.bind(this),
             this._dataErr.bind(this)
@@ -91,7 +91,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           var range = maxTime - minTime;
 
-
           //iterate through all of the rows returned
           for (var k = 0; k < results.length; k++) {
             var sData = results[k];
@@ -104,6 +103,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var inCount = sData.get('in');
             var outCount = sData.get('out');
             if (inCount == 0 && outCount == 0) continue;
+
+            //adds the entry and exit data to the weight.
+            this.piList[sData.get('pid')].weight += (inCount + outCount);
 
             /*      used for chart data date ranges     */
             var t1 = new Date(sData.get('start') * 1000);
@@ -122,16 +124,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             chartData.push([t1str, inCount, outCount]);
             /*      used for chart data date ranges     */
 
-            //push to heatArray in order to create the heat map points in the map element in _heatDataChanged
-            heatArray.push({
-              lat: refLat,
-              lon: refLon
-            });
           }
           /*--- end of for-loop ---*/
+          //push to heatArray in order to create the heat map points in the map element in _heatDataChanged
+          for(var x in this.piList){
+            heatArray.push({
+              lat: x.lat,
+              lon: x.lon,
+              weight: x.weight
+            })
+          }
+
           this.heat = heatArray;
           theChart.data = chartData;
         },
+        //sets up the coord map
         _piLoaded: function (results) {
           this.piList = {};
 
@@ -140,7 +147,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               //{coord:results[k].get('coord')};
             {
               lat: results[k].get('coord').latitude,
-              lon: results[k].get('coord').longitude
+              lon: results[k].get('coord').longitude,
+              weight: 0
             };
           }
         },
