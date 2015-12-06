@@ -76,18 +76,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var elem = this.$$('google-map');
           this.sensorData = [];
           for (var k = 0; k < this.heatData.length; k++) {
-            if(k%2==0) {
               this.push("sensorData", {
                 location: new google.maps.LatLng(
-                  this.heatData[k].lat, this.heatData[k].lon), weight: 100
+                  this.heatData[k].lat, this.heatData[k].lon), weight: this.heatData[k].weight
               });
-            }
-            else {
-              this.push("sensorData", {
-                location: new google.maps.LatLng(
-                  this.heatData[k].lat + .0001, this.heatData[k].lon + .0001), weight: 50
-              });
-            }
           }
           this.hmap.setData(this.sensorData);
           this.hmap.setMap(elem.map);
@@ -97,19 +89,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.sensorData = [];
           if (this.heatData) {
             for (var k = 0; k < this.heatData.length; k++) {
-              if(k%2==0) {
                 this.push("sensorData", {
                   location: new google.maps.LatLng(
-                    this.heatData[k].lat, this.heatData[k].lon), weight: 100
+                    this.heatData[k].lat, this.heatData[k].lon), weight: this.heatData[k].weight
                 });
-              }
-              else {
-                this.push("sensorData", {
-                  location: new google.maps.LatLng(
-                    this.heatData[k].lat + .0001, this.heatData[k].lon + .0001), weight: 50
-                });
-              }
-
             }
           }
           this.hmap = new google.maps.visualization.HeatmapLayer();

@@ -129,9 +129,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //push to heatArray in order to create the heat map points in the map element in _heatDataChanged
           for(var x in this.piList){
             heatArray.push({
-              lat: x.lat,
-              lon: x.lon,
-              weight: x.weight
+              lat: this.piList[x].lat,
+              lon: this.piList[x].lon,
+              weight: this.piList[x].weight
             })
           }
 
