@@ -11,7 +11,8 @@
     "vaadin-components": "0.3.0-beta9",
     "paper-button": "PolymerElements/paper-button#~1.0.8",
     "google-map": "GoogleWebComponents/google-map#~1.1.6",
-    "google-chart": "GoogleWebComponents/google-chart#~1.0.4"
+    "google-chart": "GoogleWebComponents/google-chart#~1.0.4",
+    "paper-date-picker": "polymer-paper-date-picker#~1.1.2"
   },
   "devDependencies": {
     "web-component-tester": "*",

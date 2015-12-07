@@ -91,6 +91,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           var range = maxTime - minTime;
 
+          //reset all the weights to 0f
+          for(var x in this.piList){
+            this.piList[x].weight = 0;
+          }
+
           //iterate through all of the rows returned
           for (var k = 0; k < results.length; k++) {
             var sData = results[k];
@@ -128,11 +133,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           /*--- end of for-loop ---*/
           //push to heatArray in order to create the heat map points in the map element in _heatDataChanged
           for(var x in this.piList){
-            heatArray.push({
-              lat: this.piList[x].lat,
-              lon: this.piList[x].lon,
-              weight: this.piList[x].weight
-            })
+            if (this.piList[x].weight > 0) {
+              heatArray.push({
+                lat: this.piList[x].lat,
+                lon: this.piList[x].lon,
+                weight: this.piList[x].weight
+              })
+            }
           }
 
           this.heat = heatArray;
