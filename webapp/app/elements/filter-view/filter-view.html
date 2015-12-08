@@ -20,9 +20,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           padding-bottom: 8px;
       }
       paper-fab.applyFilter{
-        position: absolute;
-        right: 10px;
-        bottom: -10px;
+          position: absolute;
+          right: 10px;
+          bottom: -10px;
+      }
+      .date-time{
+          width: 15%;
+          margin-left: 10px;
       }
     </style>
 
@@ -61,15 +65,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button dialog-confirm>OK</paper-button>
       </div>
     </paper-dialog>
-    <paper-time-picker></paper-time-picker>
 
     <paper-material elevation="1"  style="padding: 16px">
       <div class="header">FILTERS</div>
 
-      <paper-input style="width:45% "label="Start Date" on-click="toggleStartDate"></paper-input>
-      <paper-input style="width:45% "label="Start Time" on-click="toggleStartTime"></paper-input>
-      <paper-input style="width:45% "label="End Date" on-click="toggleEndDate"></paper-input>
-      <paper-input style="width:45%" label="End Time" on-click="toggleEndTime"></paper-input>
+      <div class="flex layout horizontal">
+      <paper-input class="date-time" label="Start Date" on-click="toggleStartDate"></paper-input>
+      <paper-input class="date-time" label="Start Time" on-click="toggleStartTime"></paper-input>
+        <h1>-</h1>
+      <paper-input class="date-time" label="End Date" on-click="toggleEndDate"></paper-input>
+      <paper-input class="date-time" label="End Time" on-click="toggleEndTime"></paper-input>
+      </div>
 
 
       <paper-fab class="applyFilter" icon="check"></paper-fab>

@@ -47,9 +47,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           locationPiList: { //pi list of all the pis in that specific location for querying whats in that location
             type: Array
-          }
+          },
+          allSensorData: Array  //holds all sensor data just for the specific location
         },
         locationSelected: function (newVal, oldVal) {
+          //reset the sensor data when go to a new location
+          this.allSensorData = [];
+
           //query the Blueprints table to find which building and floor
           var query = new Parse.Query('Blueprints');
           query.matches("Description", this.currentLocation);
@@ -64,16 +68,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //retrieve the list of pis for that building and floor
           this.locationPiList = results[0].get('piList');
 
-          //query the data table for all rows with those pi ids
-          var query = new Parse.Query('data');
-          query.containedIn('pid', this.locationPiList);
-          query.find().then(
-            this._dataLoaded.bind(this),
-            this._dataErr.bind(this)
-          );
+          //only query parse if the data is not loaded
+          if (this.allSensorData.length == 0) {
+            //query the data table for all rows with those pi ids
+            var query = new Parse.Query('data');
+            query.containedIn('pid', this.locationPiList);
+            query.find().then(
+              this._dataLoaded.bind(this),
+              this._dataErr.bind(this)
+            );
+          }
         },
         _dataLoaded: function (results) {
           var heatArray = [];
+          this.allSensorData = results;
 
           /* Initialize parameters for the chart */
           var chartData = [['Time', 'Entry', 'Exit']];
@@ -97,8 +105,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           //iterate through all of the rows returned
-          for (var k = 0; k < results.length; k++) {
-            var sData = results[k];
+          for (var k = 0; k < this.allSensorData.length; k++) {
+            var sData = this.allSensorData[k];
 
             //retrieve coordinates based on the pid of the row and the hashed pi list
             var refLat = this.piList[sData.get('pid')].lat;
