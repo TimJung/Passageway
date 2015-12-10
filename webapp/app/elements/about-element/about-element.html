@@ -19,33 +19,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       p{
         padding: 8px;
       }
-      img.center {
-        display: block;
+      #cards {
+        @apply(--layout-vertical);
+        @apply(--center-justified);
+        max-width: 400px;
         margin-left: auto;
         margin-right: auto;
       }
-      paper-button.black {
-        margin-left: 8px;
-        background: #171515;
-        color: white;
+      paper-card {
+        width: 100%;
+        margin-top: 16px;
       }
-    </style>
-    <paper-material>
-      <p>Welcome to Passageway, a project developed by four Computer Science
-        students at Grand Valley State University. The goal of the project is
-        to provide businesses or individuals with a simple way to monitor and
-        visualize foot-traffic data on their property.</p>
-    </paper-material>
+      .badge{
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+      }
 
-    <paper-material>
-      <img class="center" src="//assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" width="100px"/>
-      <p>Passageway is completely open-source! Check out our GitHub repository to learn more about how
+
+    </style>
+    <div class="cards">
+    <paper-card heading="About This Project">
+      <div class="card-content">
+        Welcome to Passageway, a project developed by four Computer Science
+        students at Grand Valley State University. The project offers a solution for
+        aggregating, displaying, and analyzing foot traffic data within facilities.
+        The project uses Raspberry Pi computers with infrared beam pairs to capture
+        individuals entering or exiting areas within a building. This data is stored
+        in a cloud database and then accessed by a website in an easy-to-follow format.
+      </div>
+    </paper-card>
+
+    <paper-card heading="&emsp; Fork This!">
+      <img class="badge" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"/>
+      <div class="card-content">
+        Passageway is completely open-source! Check out our GitHub repository to learn more about how
         to get the ball rolling and integrate Passageway into your own project.
         We made our instructions as easy to follow as possible and we are
-        continuing to refine the documentation.</p>
-      <paper-button class="black" onclick="window.open('//github.com/TimJung/Passageway','_blank');">View Repository</paper-button>
-      <paper-button class="black" onclick="window.open('github-windows://openRepo/https://github.com/TimJung/Passageway','_blank');">Clone to Desktop</paper-button>
-    </paper-material>
+        continuing to refine the documentation.
+      </div>
+      <div class="card-actions">
+        <paper-button onclick="window.open('//github.com/TimJung/Passageway','_blank');">View Repository</paper-button>
+        <paper-button onclick="window.open('github-windows://openRepo/https://github.com/TimJung/Passageway','_blank');">Clone to GitHub Desktop</paper-button>
+        <paper-button onclick="window.open('//github.com/TimJung/Passageway/issues','_blank');">Submit Issue</paper-button>
+      </div>
+    </paper-card>
+    </div>
   </template>
   <script>
   (function() {

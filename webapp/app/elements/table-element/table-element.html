@@ -12,12 +12,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="stylesheet" type="text/css" href="../../styles/table.css">
 
-<dom-module id="foot-traffic">
+<dom-module id="table-element">
+  <style>
+    paper-card {
+      width: 100%;
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+  </style>
   <template>
 
-    <paper-material>
-      <p1 style="padding-left: 8px;">This table is displaying all of the data from every location. To see info for specific locations, please select one in the menu.</p1>
-    </paper-material>
+    <paper-card>
+      <div class="card-content">
+        This table is displaying all of the data from every location. To see info for specific locations, please select one in the menu.
+      </div>
+    </paper-card>
     <div class="table-responsive-vertical shadow-z-1">
       <!--<v-grid selection-mode="single">-->
         <table id="data" class="table table-hover table-mc-light-blue">
@@ -52,12 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     'use strict';
 
     Polymer({
-      is: 'foot-traffic',
+      is: 'table-element',
 
       properties: {
         foo: {
           type: String,
-          value: 'foot-traffic',
+          value: 'table-element',
           notify: true
         },
         heat: {
