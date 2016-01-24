@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           location: {
             type: String,
-            observer: "locationSelected"
+            observer: 'locationSelected'
           },
           sensorData: Array,
           overlay: Object,
@@ -76,7 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var elem = this.$$('google-map');
           this.sensorData = [];
           for (var k = 0; k < this.heatData.length; k++) {
-              this.push("sensorData", {
+              this.push('sensorData', {
                 location: new google.maps.LatLng(
                   this.heatData[k].lat, this.heatData[k].lon), weight: this.heatData[k].weight
               });
@@ -85,11 +85,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.hmap.setMap(elem.map);
         },
         _ApiLoaded: function (e) {
+          console.log('ApiLoaded: ' e);
           var elem = this.$$('google-map');
           this.sensorData = [];
           if (this.heatData) {
             for (var k = 0; k < this.heatData.length; k++) {
-                this.push("sensorData", {
+                this.push('sensorData', {
                   location: new google.maps.LatLng(
                     this.heatData[k].lat, this.heatData[k].lon), weight: this.heatData[k].weight
                 });
@@ -105,8 +106,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.hmap.setMap(elem.map);
         },
         locationSelected: function(newVal, oldVal){
+          console.log('locationSelect. oldVal: ', oldVal, ' newVal: ', newVal);
           var query = new Parse.Query ('Blueprints');
-          query.matches("Description", this.location);
+          query.matches('Description', this.location);
           /* Use Java promises */
           query.find().then(
             this._overlayLoaded.bind(this),
@@ -140,8 +142,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //display the overlay image
           this.overlay = new google.maps.GroundOverlay(
             theImage.url(), imageBounds);
-          if(this.$$('paper-toggle-button').checked)
+          if(this.$$('paper-toggle-button').checked){
             this.overlay.setMap(elem.map);
+          }
         },
         _overlayErr: function(err) {
           alert ('Error loading overlay', err);
