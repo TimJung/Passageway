@@ -80,9 +80,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         /* Use fake geopoints */
         var refLat = 42.966637;
         var refLon = -85.887161;
+        console.log('Lat: ', refLat, ' Lon: ', refLon);
         this.sensorData = [];
         var chartData = [['Time','Entry','Exit']];
+        console.log('chartData: ', chartData);
         var theChart = this.$$('google-chart');
+        console.log('theChart: ', theChart);
 
         /* Determine the time range of the data */
         var minTime = Number.MAX_VALUE;
@@ -90,19 +93,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         for (var k = 0; k < results.length; k++) {
           var t1 = results[k].get('start');
           var t2 = results[k].get('end');
-          if (minTime > t1) minTime = t1;
-          if (maxTime < t2) maxTime = t2;
+          if (minTime > t1){
+            minTime = t1;
+          }
+          if (maxTime < t2){
+            maxTime = t2;
+          }
         }
         var range = maxTime - minTime;
+        console.log('range: ', range);
 
-        for (var k = 0; k < results.length; k++) {
-          var sData = results[k];
+        for (var j = 0; j < results.length; j++) {
+          var sData = results[j];
           var inCount = sData.get('in');
           var outCount = sData.get('out');
-          if (inCount == 0 && outCount == 0) continue;
+          if (inCount === 0 && outCount === 0){
+            continue;
+          }
 
-          var t1 = new Date(sData.get('start') * 1000);
-          var t2 = new Date(sData.get('end') * 1000);
+          t1 = new Date(sData.get('start') * 1000);
+          t2 = new Date(sData.get('end') * 1000);
           var t1str, t2str;
           /* if the range is less than a day, use time as the x-label,
              otherwise use date as x-label */
