@@ -40,7 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           currentLocation: {
             type: String,
-            observer: "locationSelected"
+            observer: 'locationSelected'
           },
           piList: { //pi list of all the pis in the system to use a hash map for their coordinates
             type: Map
@@ -50,13 +50,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           allSensorData: Array  //holds all sensor data just for the specific location
         },
-        locationSelected: function (newVal, oldVal) {
+        locationSelected: function () { //(newVal, oldVal) not used to removed for now
           //reset the sensor data when go to a new location
           this.allSensorData = [];
 
           //query the Blueprints table to find which building and floor
           var query = new Parse.Query('Blueprints');
-          query.matches("Description", this.currentLocation);
+          query.matches('Description', this.currentLocation);
           /* Use Java promises */
           query.find().then(
             this._locationLoaded.bind(this),
@@ -105,24 +105,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           //iterate through all of the rows returned
-          for (var k = 0; k < this.allSensorData.length; k++) {
-            var sData = this.allSensorData[k];
+          for (var z = 0; z < this.allSensorData.length; z++) {
+            var sData = this.allSensorData[z];
 
             //retrieve coordinates based on the pid of the row and the hashed pi list
-            var refLat = this.piList[sData.get('pid')].lat;
-            var refLon = this.piList[sData.get('pid')].lon;
+            //defined but never used so currently commented out
+            //var refLat = this.piList[sData.get('pid')].lat;
+            //var refLon = this.piList[sData.get('pid')].lon;
 
             //only continue if the counts are > 0
             var inCount = sData.get('in');
             var outCount = sData.get('out');
-            if (inCount == 0 && outCount == 0) continue;
+            if (inCount === 0 && outCount === 0){ 
+              continue;
+            }
 
             //adds the entry and exit data to the weight.
             this.piList[sData.get('pid')].weight += (inCount + outCount);
 
             /*      used for chart data date ranges     */
-            var t1 = new Date(sData.get('start') * 1000);
-            var t2 = new Date(sData.get('end') * 1000);
+            t1 = new Date(sData.get('start') * 1000);
+            t2 = new Date(sData.get('end') * 1000);
             var t1str, t2str;
             /* if the range is less than a day, use time as the x-label,
              otherwise use date as x-label */
@@ -140,13 +143,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           /*--- end of for-loop ---*/
           //push to heatArray in order to create the heat map points in the map element in _heatDataChanged
-          for(var x in this.piList){
-            if (this.piList[x].weight > 0) {
+          for(var j in this.piList){
+            if (this.piList[j].weight > 0) {
               heatArray.push({
-                lat: this.piList[x].lat,
-                lon: this.piList[x].lon,
-                weight: this.piList[x].weight
-              })
+                lat: this.piList[j].lat,
+                lon: this.piList[j].lon,
+                weight: this.piList[j].weight
+              });
             }
           }
 
