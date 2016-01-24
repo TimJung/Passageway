@@ -134,12 +134,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         buildingIndex: {
           type: Number,
-          observer: "indexChange"
+          observer: 'indexChange'
         },
         buildings: Array,
 
       },
       indexChange: function(newVal, oldVal) {
+        console.log('indexChange: oldVal: ' oldVal);
         this.currentLocation = this.buildings[newVal];
       },
       ready: function(){
@@ -159,7 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         for (var k = 0; k < results.length; k++) {
           var sData = results[k];
           var desc = sData.get('Description');
-          this.push("buildings", desc);
+          this.push('buildings', desc);
         }
       },
       onDataRouteClick: function() {
