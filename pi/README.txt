@@ -18,3 +18,6 @@ To compile the .java file:
 
 To run it:
    java -classpath . PServer
+   
+To run the pi.c file:
+   gcc -Wall -o pi pi.c -lwiringpi
