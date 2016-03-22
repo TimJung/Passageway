@@ -18,7 +18,7 @@ void pinHandler1 (void);
 void pinHandler2 (void);
 struct time {struct timeval tv; struct timezone tz;};
 void setTime (struct time *);
-void eventAnalyzer(int risenBeam);
+void eventAnalyzer();
 int isTimeGreater(struct time time1, struct time time2);
 long diffTimeMicro (struct time time1, struct time time2);
 void resetTime ();
@@ -46,7 +46,7 @@ struct time * temp;
 struct time start;
 
 //What is the ideal threshold?
-const int TIME_OUT = 1000000;
+const int TIME_OUT = 3000000;
 const int DELTA_TIME_OUT = 1000000;
 
 //Tracks the number of events so they can be sent when alarm is called.
@@ -141,7 +141,7 @@ void pinHandler1 (void){
 			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
 			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) &&
 			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
-				eventAnalyzer(BEAM1);
+				eventAnalyzer();
 			}
 	}
 }
@@ -169,7 +169,7 @@ void pinHandler2 (void){
 
 		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
 		if((isTimeGreater(beam2RiseLatest, beam1RiseLatest) && isTimeGreater(beam1RiseLatest, beam1FallLatest))){
-			eventAnalyzer(BEAM2);
+			eventAnalyzer();
 		}
 	}
 }
@@ -198,88 +198,27 @@ void setTime(struct time * ptr){
  *
  * risenBeam: The beam that has been detected as risen
  */
-void eventAnalyzer (int risenBeam){
-	struct time ALatestFall;
-	struct time ALatestRise;
-	struct time AOldFall;
-	struct time AOldRise;
-	struct time BLatestFall;
-	struct time BLatestRise;
-	struct time BOldFall;
-	struct time BOldRise;
-	char type[6];
-
-	if (risenBeam == BEAM1){
-		ALatestFall = beam1FallLatest;
-		ALatestRise = beam1RiseLatest;
-		AOldFall = beam1FallOld;
-		AOldRise = beam1RiseOld;
-
-		BLatestFall = beam2FallLatest;
-		BLatestRise = beam2RiseLatest;
-		BOldFall = beam2FallOld;
-		BOldRise = beam2RiseOld;
-
-		strcpy(type, "ENTRY");
-	} else {
-		//set the variables oppositely
-		ALatestFall = beam2FallLatest;
-		ALatestRise	= beam2RiseLatest;
-		AOldFall = beam2FallOld;
-		AOldRise = beam2RiseOld;
-
-		BLatestFall = beam1FallLatest;
-		BLatestRise = beam1RiseLatest;
-		BOldFall = beam1FallOld;
-		BOldRise = beam1RiseOld;
-
-		strcpy(type, "EXIT");
-	}
+void eventAnalyzer (){
 
 	//A is the current beam being considered. B is the other beam.
-	//case 0
 	//only continue if time elapsed between 2 beams is less than threshold.
-	if((diffTimeMicro(ALatestFall, BLatestFall) >= TIME_OUT)){
+	if((diffTimeMicro(beam1FallLatest, beam1RiseLatest) >= TIME_OUT)||(diffTimeMicro(beam2FallLatest, beam2RiseLatest) >= TIME_OUT)){
+		printf("One of the beams was obstructed for too long\n");
 		return;
 	}
-	//case 1
-	// if (BOldRise > ALatestFall){
-	// 	if(((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) < DELTA_TIME_OUT) &&
-	// 		((BOldFall - ALatestFall) - (BLatestRise - ALatestRise) > DELTA_TIME_OUT*-1)){
-	// 		//ENTRY and EXIT
-	// 		entryNumber +=1;
-	// 		exitNumber +=1;
-	// 		return;
-	// 	}
-	// }
-	/*case 2
-	if (isTimeGreater(AOldRise, BLatestFall)){
-		if(diffTimeMicro(AOldFall, BLatestFall) -
-		   diffTimeMicro(ALatestRise, BLatestRise) < DELTA_TIME_OUT){
-			//ENTRY and EXIT
-			entryCount +=1;
-			exitCount +=1;
-			resetTime();
-			return;
-		}
+
+	if(isTimeGreater(beam1FallLatest, beam2FallLatest)){
+		//increment Entry/Exit # based on beams
+		exitCount+=1;
+		printf("EXIT\n");
+	} else {
+		entryCount +=1;
+		printf("ENTRY\n");
 	}
-	*/
-	//case 3
-	if(isTimeGreater(ALatestFall, BLatestFall)){
-		//increment Entry/Exit # based on type
-		if (strcmp(type, "ENTRY")){
-			exitCount+=1;
-			printf("EXIT\n");
-		} else {
-			entryCount +=1;
-			printf("ENTRY\n");
+	resetTime();
 }
-		resetTime();
-		return;
-	}
-	printf("No event occurred. Why are we here???\n");
-	//printf("ALatestFall: %lu\tALatestRise: %lu\tAOldFall: %lu\tAOldRise: %lu\nBLatestFall: %lu\tBLatestFall: %lu\tBLatestRise: %lu\tBOldFall: %lu\tBOldRise: %lu\n",
-    //        ALatestFall.tv, ALatestRise.tv, AOldFall.tv, AOldRise.tv, BLatestFall.tv, BLatestRise.tv, BOldFall.tv, BOldRise.tv)
+	//printf("ALatestFall: %lu\tALatestRise: %lu\tAOldFall: %lu\tAOldRise: %lu\nBLatestFall: %lu\tBLatestFall: %lu\tBLatestRise: %lu\tBOldFall: %lu\tBOldRise:%lu\n",
+    //ALatestFall.tv, ALatestRise.tv, AOldFall.tv, AOldRise.tv, BLatestFall.tv, BLatestRise.tv, BOldFall.tv, BOldRise.tv)
 }
 
 /*
