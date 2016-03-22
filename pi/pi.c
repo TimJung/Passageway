@@ -130,26 +130,27 @@ void pinHandler1 (void){
 		firstRise1 = 0;
 		return;
 	}
-	if (digitalRead(BEAM1)==0){
-		//if current read is a 1 then it was a fall
+	//read of 1 means not-obstructed
+	//read of 0 means obstructed
+	if (digitalRead(BEAM1)==1){
+		//if current read is a 1, then fall
 		beam1FallOld = beam1FallLatest;
 		setTime(&beam1FallLatest);
+		//Beam1Fall. Only analyze if the other beam is currently in the obstructed state.
+		if(isTimeGreater(beam2FallLatest, beam2RiseLatest)){
+			eventAnalyzer();
+		}
 	} else {
-		//if current read is a 0 then it was a rise
-			beam1RiseOld = beam1RiseLatest;
-			setTime(&beam1RiseLatest);
-			//Beam1Rise. Only analyze if the other beam is currently in the risen state.
-			if(isTimeGreater(beam1RiseLatest, beam2RiseLatest) &&
-			    isTimeGreater(beam2RiseLatest, beam2FallLatest)){
-				eventAnalyzer();
-			}
+		//if current read is a 0, then was a rise
+		beam1RiseOld = beam1RiseLatest;
+		setTime(&beam1RiseLatest);
 	}
 }
 
 /*
  * Function: pinHandler2
  * ----------------------
- * Handles the interupt when beam 1's state changes
+ * Handles the interupt when beam 2's state changes
  */
 void pinHandler2 (void){
 
@@ -158,19 +159,18 @@ void pinHandler2 (void){
 		return;
 	}
 
-	if (digitalRead(BEAM2)==0){
-		//if current read is a 1 then it was a fall
+	if (digitalRead(BEAM2)==1){
+		//if current read is a 1, then fall
 		beam2FallOld = beam2FallLatest;
 		setTime(&beam2FallLatest);
-	} else {
-		//if current read is a 0 then it was a rise
-		beam2RiseOld = beam2RiseLatest;
-		setTime(&beam2RiseLatest);
-
-		//Beam2Rise. Only analyze if the other beam is currently in the risen state.
-		if((isTimeGreater(beam2RiseLatest, beam1RiseLatest) && isTimeGreater(beam1RiseLatest, beam1FallLatest))){
+		//Beam2Fall. Only analyze if the other beam is currently in the obstructed state.
+		if(isTimeGreater(beam1FallLatest, beam1RiseLatest)){
 			eventAnalyzer();
 		}
+	} else {
+		//if current read is a 0, then was a rise
+		beam2RiseOld = beam2RiseLatest;
+		setTime(&beam2RiseLatest);
 	}
 }
 
