@@ -207,7 +207,7 @@ void eventAnalyzer (){
 		return;
 	}
 
-	if(isTimeGreater(beam1FallLatest, beam2FallLatest)){
+	if(isTimeGreater(beam2FallLatest, beam1FallLatest)){
 		//increment Entry/Exit # based on beams
 		exitCount+=1;
 		printf("EXIT\n");
@@ -217,18 +217,11 @@ void eventAnalyzer (){
 	}
 	resetTime();
 }
-	//printf("ALatestFall: %lu\tALatestRise: %lu\tAOldFall: %lu\tAOldRise: %lu\nBLatestFall: %lu\tBLatestFall: %lu\tBLatestRise: %lu\tBOldFall: %lu\tBOldRise:%lu\n",
-    //ALatestFall.tv, ALatestRise.tv, AOldFall.tv, AOldRise.tv, BLatestFall.tv, BLatestRise.tv, BOldFall.tv, BOldRise.tv)
-}
+	printf("ALatestFall: %lu\tALatestRise: %lu\nBLatestFall: %lu\tBLatestRise: %lu\n",ALatestFall.tv, ALatestRise.tv, BLatestFall.tv, BLatestRise.tv)
 
 /*
  * Function: isTimeGreater
  * ----------------------
- * Sets the global variables to the current time
- *
- * time1:
- * time2:
- *
  * returns: a 1 if time1 is greater, or a 0 if time2 is greater
  */
 int isTimeGreater (struct time time1, struct time time2){
