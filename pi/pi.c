@@ -78,16 +78,17 @@ void alarmHandler(int sig)
   while (fscanf(ifp, "%s", pid) != EOF);
 
   //put info into JSON formatted string
+  if(entryCount > 0 || exitCount > 0){
   sprintf (parseObjJSON,
           "{\"pid\":\"%s\", \"start\":%lu, \"end\":%lu, \"in\":%d, \"out\":%d}",
           pid, start.tv.tv_sec, end.tv.tv_sec, entryCount, exitCount);
   parseSendRequest(client, "POST", "/1/classes/data", parseObjJSON, NULL);
-
-  printf("%s\n", parseObjJSON);
+  }
+  //printf("%s\n", parseObjJSON);
   entryCount = 0;
   exitCount = 0;
   start = end;
-  alarm(20);
+  alarm(60);
 }
 
 /*
@@ -267,11 +268,11 @@ void eventAnalyzer (int risenBeam){
 	if(isTimeGreater(ALatestFall, BLatestFall)){
 		//increment Entry/Exit # based on type
 		if (strcmp(type, "ENTRY")){
+			exitCount+=1;
+			printf("EXIT\n");
+		} else {
 			entryCount +=1;
 			printf("ENTRY\n");
-		} else {
-			exitCount +=1;
-			printf("EXIT\n");
 }
 		resetTime();
 		return;
