@@ -216,8 +216,8 @@ void eventAnalyzer (){
 		printf("ENTRY\n");
 	}
 	resetTime();
+	//printf("ALatestFall: %lu\tALatestRise: %lu\nBLatestFall: %lu\tBLatestRise: %lu\n",ALatestFall.tv, ALatestRise.tv, BLatestFall.tv, BLatestRise.tv)
 }
-	printf("ALatestFall: %lu\tALatestRise: %lu\nBLatestFall: %lu\tBLatestRise: %lu\n",ALatestFall.tv, ALatestRise.tv, BLatestFall.tv, BLatestRise.tv)
 
 /*
  * Function: isTimeGreater
