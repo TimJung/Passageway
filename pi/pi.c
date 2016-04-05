@@ -136,6 +136,7 @@ void pinHandler1(void) {
 	//read of 0 means obstructed
 	if (digitalRead(BEAM1) == 1) {
 		//if current read is a 1, then fall
+		printf("Difference between now and last beam 1 fall is %lu\n", diffTimeMicro(temp,beam1FallLatest));
 		if (diffTimeMicro(temp, beam1FallLatest) >= BREAK_THRESHOLD) {
 			beam1FallOld = beam1FallLatest;
 			setTime(&beam1FallLatest);
@@ -146,7 +147,7 @@ void pinHandler1(void) {
 			}
 		}
 		else {
-			printf("Fuzz avoided on beam 1 fall\n");
+			printf("--Fuzz avoided on beam 1 fall\n");
 		}
 	}
 	else {
@@ -188,7 +189,7 @@ void pinHandler2(void) {
 		} else {
 			printf("--Fuzz avoided on beam 2 fall\n");
 		}
-	else {
+	}else {
 		//if current read is a 0, then was a rise
 		if (diffTimeMicro(temp, beam2RiseLatest) >= BREAK_THRESHOLD) {
 			beam2RiseOld = beam2RiseLatest;
