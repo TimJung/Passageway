@@ -136,11 +136,11 @@ void pinHandler1(void) {
 	//read of 0 means obstructed
 	if (digitalRead(BEAM1) == 1) {
 		//if current read is a 1, then fall
-		printf("Difference between now and last beam 1 fall is %lu\n", diffTimeMicro(temp,beam1FallLatest));
+		//printf("Difference between now and last beam 1 fall is %lu\n", diffTimeMicro(temp,beam1FallLatest));
 		if (diffTimeMicro(temp, beam1FallLatest) >= BREAK_THRESHOLD) {
 			beam1FallOld = beam1FallLatest;
 			setTime(&beam1FallLatest);
-				printf("--Beam 2 Fall\n");
+			printf("--Beam 1 Fall\n");
 			//Beam1Fall. Only analyze if the other beam is currently in the obstructed state.
 			if (isTimeGreater(beam2FallLatest, beam2RiseLatest)) {
 				eventAnalyzer();
@@ -173,7 +173,7 @@ void pinHandler2(void) {
 		firstRise2 = 0;
 		return;
 	}
-	
+
 	setTime(&temp);
 
 	if (digitalRead(BEAM2) == 1) {
@@ -233,14 +233,14 @@ void eventAnalyzer() {
 		return;
 	}
 
-	if (isTimeGreater(beam2FallLatest, beam1FallLatest)) {
+	if (isTimeGreater(beam2RiseLatest, beam1RiseLatest)) {
 		//increment Entry/Exit # based on beams
 		exitCount += 1;
-		printf("EXIT\n");
+		printf("EXIT\n\n");
 	}
 	else {
 		entryCount += 1;
-		printf("ENTRY\n");
+		printf("ENTRY\n\n");
 	}
 	resetTime();
 	//printf("ALatestFall: %lu\tALatestRise: %lu\nBLatestFall: %lu\tBLatestRise: %lu\n",ALatestFall.tv, ALatestRise.tv, BLatestFall.tv, BLatestRise.tv)
