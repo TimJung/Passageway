@@ -1,5 +1,14 @@
-#
-include < stdlib.h > #include < wiringPi.h > #include < string.h > #include < stdio.h > #include < time.h > #include < unistd.h > #include < sys / types.h > #include < sys / wait.h > #include < sys / time.h > #include < parse.h > #include "parse_secret.h"
+#include <stdlib.h> 
+#include <wiringPi.h> 
+#include <string.h> 
+#include <stdio.h> 
+#include <time.h> 
+#include <unistd.h>
+#include <sys/types.h> 
+#include <sys/wait.h> 
+#include <sys/time.h> 
+#include <parse.h> 
+#include "parse_secret.h"
 
 int firstRise1 = 1;
 int firstRise2 = 1;
